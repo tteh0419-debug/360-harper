@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Harper Palembang - Virtual Tour 360° Interaktif</title>
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Pannellum Library -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css">
+    <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+    <!-- GSAP for smooth animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #111;
+            overflow: hidden;
+            color: #fff;
+        }
+
+        /* Custom Cursor (Luxury) */
+        body {
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="27" viewBox="0 0 24 27"><polygon points="2,2 22,13 12,13 10,25" fill="%23C8A96A" stroke="%23111" stroke-width="1.5"/><circle cx="12" cy="12" r="2" fill="white"/></svg>') 12 5, auto;
+        }
+
+        /* Loading Bar */
+        #loading-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 3px;
+            background: #C8A96A;
+            z-index: 10000;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 8px gold;
+        }
+
+        /* Header Sticky + Blur */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.2rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(8px);
+            background: rgba(17, 17, 17, 0.4);
+            border-bottom: 1px solid rgba(200, 169, 106, 0.2);
+        }
+        .header.scrolled {
+            background: rgba(17, 17, 17, 0.95);
+            backdrop-filter: blur(12px);
+            padding: 0.8rem 3rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+            border-bottom: 1px solid #C8A96A;
+        }
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            background: linear-gradient(135deg, #FFFFFF, #C8A96A);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .logo img {
+            height: 45px;
+            width: auto;
+            filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
+        }
+
+        /* Dedicated Logo Overlay for Panorama */
+        .logo-overlay {
+            position: absolute; /* Relative to #panorama */
+            top: 25px;
+            left: 30px;
+            z-index: 1001;
+            pointer-events: auto;
+            transition: all 0.4s ease;
+        }
+
+        .logo-overlay img {
+            height: 60px; /* Optimal premium size */
+            width: auto;
+            filter: drop-shadow(0 2px 15px rgba(0,0,0,0.6));
+            transition: transform 0.3s ease;
+        }
+        .logo-overlay img:hover {
+            transform: scale(1.05);
+        }
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+        }
+        .nav-menu a {
+            color: #f5f5f5;
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.3s;
+            font-size: 1rem;
+            letter-spacing: 0.5px;
+        }
+        .nav-menu a:hover { color: #C8A96A; transform: translateY(-2px); }
+        .menu-icon {
+            display: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #C8A96A;
+        }
+
+        /* Sidebar (Left Panel) */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -320px;
+            width: 300px;
+            height: 100vh;
+            background: rgba(17, 17, 17, 0.95);
+            backdrop-filter: blur(16px);
+            z-index: 1100;
+            transition: 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            border-right: 1px solid rgba(200,169,106,0.4);
+            padding: 6rem 1.5rem 2rem;
+            box-shadow: 5px 0 25px rgba(0,0,0,0.5);
+        }
+        .sidebar.open {
+            left: 0;
+        }
+        .close-sidebar {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 1.6rem;
+            cursor: pointer;
+            color: #C8A96A;
+        }
+        .scene-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        .scene-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.8rem 1rem;
+            border-radius: 12px;
+            transition: 0.2s;
+            cursor: pointer;
+            background: rgba(255,255,255,0.03);
+            border-left: 3px solid transparent;
+        }
+        .scene-item i {
+            font-size: 1.4rem;
+            width: 30px;
+            color: #C8A96A;
+        }
+        .scene-item span {
+            font-weight: 500;
+        }
+        .scene-item.active {
+            background: rgba(200,169,106,0.2);
+            border-left-color: #C8A96A;
+            box-shadow: 0 0 8px rgba(200,169,106,0.3);
+        }
+        .scene-item:hover {
+            background: rgba(200,169,106,0.15);
+            transform: translateX(5px);
+        }
+
+        /* Control UI & Mini Map */
+        .controls-panel {
+            position: fixed;
+            bottom: 50px;
+            right: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 900;
+        }
+        .ctrl-btn {
+            width: 48px;
+            height: 48px;
+            background: rgba(17,17,17,0.8);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(200,169,106,0.6);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #C8A96A;
+            font-size: 1.4rem;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .ctrl-btn:hover {
+            background: #C8A96A;
+            color: #111;
+            transform: scale(1.05);
+            border-color: white;
+        }
+        #autoRotateBtn {
+            flex-direction: column;
+            padding: 2px;
+            margin: 2px;
+        }
+        .mini-map {
+            position: fixed;
+            bottom: 50px;
+            right: 80px;
+            background: rgba(17,17,17,0.85);
+            backdrop-filter: blur(12px);
+            padding: 12px 20px;
+            border-radius: 40px;
+            border: 1px solid #C8A96A;
+            display: flex;
+            gap: 18px;
+            z-index: 900;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        .mini-map span {
+            cursor: pointer;
+            transition: 0.2s;
+            padding: 5px 8px;
+            border-radius: 20px;
+        }
+        .mini-map span:hover, .mini-map span.active-map {
+            background: #C8A96A;
+            color: #111;
+        }
+        .mini-map .admin-sep {
+            width: 1px;
+            height: 20px;
+            background: rgba(200, 169, 106, 0.4);
+            align-self: center;
+        }
+        .mini-map .admin-link {
+            color: #C8A96A;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+        }
+        .mini-map .admin-link:hover {
+            color: white;
+            transform: scale(1.1);
+        }
+
+        /* Music Control */
+        .music-ctrl {
+            position: fixed;
+            top: 20px;
+            right: 25px;
+            z-index: 1001;
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Book Now Button */
+        .book-now-btn {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #C8A96A, #a88a4d);
+            color: #111;
+            padding: 12px 35px;
+            border-radius: 50px;
+            font-weight: 700;
+            text-decoration: none;
+            z-index: 1000;
+            box-shadow: 0 10px 25px rgba(200, 169, 106, 0.4);
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        .book-now-btn:hover {
+            transform: translateX(-50%) translateY(-5px);
+            box-shadow: 0 15px 30px rgba(200, 169, 106, 0.6);
+            background: #fff;
+        }
+
+        /* Info Panel (Right Overlay) */
+        .info-panel {
+            position: fixed;
+            top: 100px;
+            right: -380px;
+            width: 340px;
+            background: rgba(17,17,17,0.92);
+            backdrop-filter: blur(16px);
+            border-radius: 20px 0 0 20px;
+            border-left: 2px solid #C8A96A;
+            padding: 1.5rem;
+            z-index: 1050;
+            transition: 0.4s ease;
+            box-shadow: -5px 5px 25px rgba(0,0,0,0.5);
+        }
+        .info-panel.open {
+            right: 0;
+        }
+        .info-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #C8A96A;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        .info-header h3 {
+            font-family: 'Playfair Display', serif;
+            color: #C8A96A;
+        }
+        .close-info {
+            font-size: 1.3rem;
+            cursor: pointer;
+        }
+        .info-panel img {
+            width: 100%;
+            border-radius: 12px;
+            margin: 15px 0;
+            border: 1px solid gold;
+        }
+        .info-desc {
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* Footer */
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(17,17,17,0.6);
+            backdrop-filter: blur(8px);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            z-index: 800;
+            pointer-events: auto;
+            border-top: 0.5px solid rgba(200,169,106,0.3);
+        }
+        .social-icons a {
+            color: #C8A96A;
+            margin: 0 8px;
+            font-size: 1rem;
+            transition: 0.2s;
+        }
+        .social-icons a:hover { color: white; }
+
+        /* Pannellum container */
+        #panorama {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Toggle sidebar button */
+        .toggle-sidebar {
+            position: fixed;
+            top: 100px; /* Moved down to make space for logo */
+            left: 25px;
+            z-index: 1001;
+            font-size: 1.8rem;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #C8A96A;
+            transition: 0.2s;
+            border: 1px solid rgba(200,169,106,0.6);
+        }
+        .toggle-sidebar:hover {
+            background: #C8A96A;
+            color: black;
+        }
+
+        @media (max-width: 768px) {
+            .header { padding: 0.8rem 1.5rem; }
+            .nav-menu { display: none; }
+            .menu-icon { display: block; }
+            .mini-map { display: none; }
+            .info-panel { width: 280px; }
+        }
+        /* Pulse animation for hotspots */
+        .pnlm-hotspot {
+            transition: transform 0.2s;
+        }
+        .pnlm-hotspot:hover {
+            transform: scale(1.2);
+        }
+        .custom-tooltip {
+            background: rgba(0,0,0,0.8);
+            color: #C8A96A;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            white-space: nowrap;
+            border: 1px solid rgba(200, 169, 106, 0.5);
+            backdrop-filter: blur(4px);
+            pointer-events: none;
+        }
+
+        /* Sembunyikan text default Pannellum agar tidak bug/double */
+        .pnlm-hotspot span {
+            display: none !important;
+        }
+        .pnlm-tooltip span {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+<!-- Welcome Modal -->
+<div id="welcomeModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px);">
+    <div style="text-align: center; max-width: 500px; padding: 2rem; border: 1px solid #C8A96A; border-radius: 20px; background: rgba(17,17,17,0.8);">
+        <h1 style="font-family: 'Playfair Display', serif; color: #C8A96A; margin-bottom: 1rem;">Selamat Datang</h1>
+        <p style="margin-bottom: 2rem; line-height: 1.6;">Nikmati pengalaman Virtual Tour 360° di Harper Palembang. Jelajahi setiap sudut kenyamanan kami.</p>
+        <button id="startTourBtn" style="padding: 12px 30px; background: #C8A96A; border: none; border-radius: 30px; color: #111; font-weight: 600; cursor: pointer; transition: 0.3s;">Mulai Jelajah</button>
+    </div>
+</div>
+
+<div id="loading-progress"></div>
+<div class="toggle-sidebar" id="toggleSidebarBtn"><i class="fas fa-bars"></i></div>
+
+<div class="music-ctrl">
+    <div class="ctrl-btn" id="musicBtn" title="Play/Pause Ambience"><i class="fas fa-music"></i></div>
+</div>
+
+<div class="header" id="mainHeader">
+    <div class="logo">
+        <!-- Header logo removed in favor of floating logo-overlay -->
+    </div>
+    <div class="nav-menu">
+        <a href="#">Home</a>
+        <a href="#" id="virtualTourLink">Virtual Tour</a>
+        <a href="#">Rooms</a>
+        <a href="#">Facilities</a>
+        <a href="#">Contact</a>
+        <a href="admin/login.html" title="Admin Login"><i class="fas fa-user-shield"></i></a>
+    </div>
+    <div class="menu-icon"><i class="fas fa-ellipsis-h"></i></div>
+</div>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+    <div class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></div>
+    <h3 style="color:#C8A96A; margin-bottom: 1rem;"><i class="fas fa-map-marked-alt"></i> Explore Harper</h3>
+    <div class="scene-list" id="sceneList"></div>
+</div>
+
+<!-- Info Panel -->
+<div class="info-panel" id="infoPanel">
+    <div class="info-header">
+        <h3 id="infoTitle">Harper Lobby</h3>
+        <div class="close-info" id="closeInfo"><i class="fas fa-times-circle"></i></div>
+    </div>
+    <img id="infoImage" src="foto/Lobby New.jpeg" alt="scene preview">
+    <p class="info-desc" id="infoDesc">Experience elegance and warm welcome at Harper Palembang Lobby, with modern design and cozy atmosphere.</p>
+</div>
+
+<!-- Control Buttons + MiniMap -->
+<div class="controls-panel">
+    <div class="ctrl-btn" id="homeBtn" title="Kembali ke Halaman Utama"><i class="fas fa-home"></i></div>
+    <div class="ctrl-btn" id="fullscreenBtn"><i class="fas fa-expand"></i></div>
+    <div class="ctrl-btn" id="zoomInBtn"><i class="fas fa-search-plus"></i></div>
+    <div class="ctrl-btn" id="zoomOutBtn"><i class="fas fa-search-minus"></i></div>
+    <div class="ctrl-btn" id="resetViewBtn"><i class="fas fa-sync-alt"></i></div>
+    <div class="ctrl-btn" id="autoRotateBtn"><i class="fas fa-redo-alt"></i></div>
+    <div class="ctrl-btn" id="hotspotHelperBtn" title="Ambil Koordinat Hotspot"><i class="fas fa-crosshairs"></i></div>
+</div>
+
+<!-- Hotspot Coordinate Display -->
+<div id="coordinatePopup" style="display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.85); color: #C8A96A; padding: 15px 25px; border-radius: 12px; border: 1px solid #C8A96A; z-index: 10001; font-family: 'Poppins', sans-serif; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+    <h4 style="margin-bottom: 10px; font-family: 'Playfair Display', serif;">Koordinat Terdeteksi</h4>
+    <div style="background: rgba(255,255,255,0.1); padding: 8px; border-radius: 6px; margin-bottom: 12px; font-family: monospace; font-size: 0.9rem;">
+        Pitch: <span id="coordPitch">0</span> | Yaw: <span id="coordYaw">0</span>
+    </div>
+    <button id="copyCoordsBtn" style="background: #C8A96A; border: none; padding: 5px 15px; border-radius: 4px; color: #111; font-weight: 600; cursor: pointer; margin-right: 10px;">Salin JSON</button>
+    <button id="closeCoordPopup" style="background: transparent; border: 1px solid #666; padding: 5px 15px; border-radius: 4px; color: #fff; cursor: pointer;">Tutup</button>
+</div>
+<div class="mini-map" id="miniMap">
+    <span data-scene="exterior" class="active-map">🏢 Exterior</span>
+    <span data-scene="lobby">🏨 Lobby</span>
+    <span data-scene="floor_3">🏢 Floor 3</span>
+    <span data-scene="pool_area">🏊 Pool</span>
+    <span data-scene="room">🛌 Rooms</span>
+    <div class="admin-sep"></div>
+    <a href="admin/login.html" class="admin-link" title="Admin Login"><i class="fas fa-user-shield"></i></a>
+</div>
+
+<div class="logo-overlay">
+    <img id="mainLogo" src="foto/Logo - Harper (WHITE).png" alt="Harper Logo">
+</div>
+
+<div id="panorama"></div>
+
+<a href="#" class="book-now-btn" id="bookNowBtn">
+    <i class="fas fa-calendar-check"></i> RESERVASI SEKARANG
+</a>
+
+<div class="footer">
+    <div>© 2026 HARPER PALEMBANG — Timeless Luxury</div>
+    <div class="social-icons">
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <span><i class="fas fa-phone-alt"></i> +62 711 555 1234</span>
+    </div>
+</div>
+
+<script>
+    // --- FETCH CONFIGURATION ---
+    let tourConfig = null;
+
+    async function initTour() {
+        try {
+            const response = await fetch('config.json?v=' + Date.now());
+            tourConfig = await response.json();
+            
+            // Update Logo from config
+            const logoOverlay = document.querySelector('.logo-overlay');
+            if (tourConfig.settings && tourConfig.settings.logo) {
+                const mainLogo = document.getElementById('mainLogo');
+                if (mainLogo) {
+                    mainLogo.src = tourConfig.settings.logo;
+                    logoOverlay.style.display = 'flex';
+                }
+            } else {
+                if (logoOverlay) logoOverlay.style.display = 'none';
+            }
+
+            // Update Music from config
+            if (tourConfig.settings && tourConfig.settings.music && tourConfig.settings.music.url) {
+                bgMusic.src = tourConfig.settings.music.url;
+                bgMusic.load();
+            }
+            
+            // Build Sidebar List
+            buildSidebar();
+            
+            // Initial load
+            loadScene(tourConfig.default.firstScene);
+            
+            console.log("Virtual Tour 360° Harper Palembang Siap");
+        } catch (error) {
+            console.error("Gagal memuat konfigurasi tour:", error);
+            // Fallback atau pesan error ke user
+        }
+    }
+
+    let panoViewer = null;
+    let currentSceneId = "lobby";
+    let autoRotateActive = true;
+    let bgMusic = new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_55a29f8c61.mp3'); // Smooth background jazz
+    bgMusic.loop = true;
+    bgMusic.volume = 0.2;
+    bgMusic.addEventListener('error', (e) => {
+        console.warn("Audio file could not be loaded. Please check the URL or your internet connection.");
+    });
+
+    // Fungsi load scene dengan smooth transition
+    function loadScene(sceneId, fade=true) {
+        if (!tourConfig.scenes[sceneId]) return;
+        const scene = tourConfig.scenes[sceneId];
+        currentSceneId = sceneId;
+        
+        // update sidebar active class
+        document.querySelectorAll('.scene-item').forEach(el => {
+            if(el.dataset.scene === sceneId) el.classList.add('active');
+            else el.classList.remove('active');
+        });
+        
+        // update mini map active class
+        document.querySelectorAll('.mini-map span').forEach(el => {
+            if(el.dataset.scene === sceneId) el.classList.add('active-map');
+            else el.classList.remove('active-map');
+        });
+
+        // Show loading progress bar
+        let progressBar = document.getElementById('loading-progress');
+        progressBar.style.width = "30%";
+        
+        if(panoViewer) {
+            panoViewer.loadScene(sceneId);
+        } else {
+            // Prepare scenes with absolute paths to avoid loading issues
+            const processedScenes = {};
+            for (const id in tourConfig.scenes) {
+                processedScenes[id] = {
+                    ...tourConfig.scenes[id],
+                    panorama: tourConfig.scenes[id].panorama.startsWith('http') ? 
+                              tourConfig.scenes[id].panorama : 
+                              '/' + tourConfig.scenes[id].panorama
+                };
+            }
+
+            // initial viewer setup with multi-scene support
+            panoViewer = pannellum.viewer('panorama', {
+                "default": {
+                    ...tourConfig.default,
+                    firstScene: sceneId // Ensure we start at the requested scene
+                },
+                "scenes": processedScenes,
+                "autoLoad": true,
+                "autoRotate": -2,
+                "autoRotateInactivity": 3000,
+                "showZoomCtrl": false,
+                "showFullscreenCtrl": false,
+                "compass": true,
+                "gyroscope": true,
+                "hotSpotDebug": false,
+                "minHfov": 50,
+                "maxHfov": 120,
+                "backgroundColor": [0.1, 0.1, 0.1]
+            });
+
+            // Handle errors
+            panoViewer.on('error', (err) => {
+                console.error("Pannellum Error:", err);
+                if (err.type === 'webgl') {
+                    alert("Browser Anda tidak mendukung WebGL atau terjadi masalah saat memuat grafis panorama.");
+                } else {
+                    console.warn("Pannellum load warning:", err.message);
+                }
+            });
+
+            // Handle custom click handlers for info hotspots
+            panoViewer.on('scenechange', (newSceneId) => {
+                currentSceneId = newSceneId;
+                updateActiveUI(newSceneId);
+                const sceneData = tourConfig.scenes[newSceneId];
+                if(sceneData) updateInfoPreview(sceneData.title, sceneData.description, sceneData.previewImg);
+                
+                progressBar.style.width = "100%";
+                setTimeout(()=> progressBar.style.width = "0%", 500);
+            });
+        }
+        
+        updateInfoPreview(scene.title, scene.description, scene.previewImg);
+        progressBar.style.width = "100%";
+        setTimeout(()=> progressBar.style.width = "0%", 800);
+    }
+
+    function updateActiveUI(sceneId) {
+        document.querySelectorAll('.scene-item').forEach(el => {
+            if(el.dataset.scene === sceneId) el.classList.add('active');
+            else el.classList.remove('active');
+        });
+        document.querySelectorAll('.mini-map span').forEach(el => {
+            if(el.dataset.scene === sceneId) el.classList.add('active-map');
+            else el.classList.remove('active-map');
+        });
+    }
+
+    function showInfoPanel(title, infoText, imgUrl) {
+        document.getElementById('infoTitle').innerText = title;
+        document.getElementById('infoDesc').innerText = infoText;
+        document.getElementById('infoImage').src = imgUrl || "foto/LOBBY.png";
+        document.getElementById('infoPanel').classList.add('open');
+    }
+
+    function updateInfoPreview(title, desc, imgUrl) {
+        document.getElementById('infoTitle').innerText = title;
+        document.getElementById('infoDesc').innerText = desc;
+        if(imgUrl) document.getElementById('infoImage').src = imgUrl;
+    }
+
+    // Build Sidebar List
+    function buildSidebar() {
+        const container = document.getElementById('sceneList');
+        container.innerHTML = '';
+        const scenes = tourConfig.scenes;
+        const icons = { 
+            exterior: "fa-hotel", 
+            lobby: "fa-building", 
+            koridor: "fa-walking",
+            lift: "fa-arrow-up",
+            floor_3: "fa-layer-group",
+            room: "fa-door-open",
+            deluxe_room: "fa-bed", 
+            deluxe_premier: "fa-crown",
+            exe_suite: "fa-gem", 
+            junior_suite: "fa-couch",
+            ballroom: "fa-users",
+            pool_area: "fa-swimming-pool"
+        };
+        
+        // Menampilkan semua scene yang ada di config secara dinamis
+        Object.keys(scenes).forEach(id => {
+            const data = scenes[id];
+            const div = document.createElement('div');
+            div.className = 'scene-item';
+            if(id === currentSceneId) div.classList.add('active');
+            div.dataset.scene = id;
+            
+            // Gunakan icon dari list jika ada, jika tidak gunakan default
+            const iconClass = icons[id] || 'fa-map-marker-alt';
+            
+            div.innerHTML = `<i class="fas ${iconClass}"></i><span>${data.title}</span>`;
+            div.addEventListener('click', () => {
+                loadScene(id, true);
+                document.getElementById('sidebar').classList.remove('open');
+            });
+            container.appendChild(div);
+        });
+    }
+    
+    // Music Control
+    const musicBtn = document.getElementById('musicBtn');
+    
+    // Function to update UI based on music state
+    function updateMusicUIState() {
+        if(bgMusic.paused) {
+            musicBtn.style.background = "rgba(17,17,17,0.8)";
+            musicBtn.style.color = "#C8A96A";
+        } else {
+            musicBtn.style.background = "#C8A96A";
+            musicBtn.style.color = "#111";
+        }
+    }
+
+    musicBtn.addEventListener('click', () => {
+        if(bgMusic.paused) {
+            bgMusic.play().then(updateMusicUIState);
+        } else {
+            bgMusic.pause();
+            updateMusicUIState();
+        }
+    });
+    
+    // Hotspot pulse secara otomatis dari pannellum sudah scale, tapi tambah custom tooltip style
+    // Kontrol UI
+    document.getElementById('homeBtn').addEventListener('click', () => {
+        loadScene(tourConfig.default.firstScene);
+    });
+    document.getElementById('fullscreenBtn').addEventListener('click', () => {
+        const elem = document.documentElement;
+        if (!document.fullscreenElement) {
+            elem.requestFullscreen();
+        } else {
+            document.exitFullscreen();
+        }
+    });
+    document.getElementById('zoomInBtn').addEventListener('click', () => {
+        if(panoViewer) panoViewer.setHfov(panoViewer.getHfov() - 10);
+    });
+    document.getElementById('zoomOutBtn').addEventListener('click', () => {
+        if(panoViewer) panoViewer.setHfov(panoViewer.getHfov() + 10);
+    });
+    document.getElementById('resetViewBtn').addEventListener('click', () => {
+        if(panoViewer) {
+            if (currentSceneId === 'exterior') {
+                panoViewer.setYaw(10);
+                panoViewer.setPitch(-15);
+                panoViewer.setHfov(110);
+            } else {
+                panoViewer.setYaw(0);
+                panoViewer.setPitch(0);
+                panoViewer.setHfov(100);
+            }
+        }
+    });
+    const autoBtn = document.getElementById('autoRotateBtn');
+    
+    // Set initial button state based on autoRotateActive
+    if(autoRotateActive) {
+        autoBtn.style.background = "#C8A96A";
+        autoBtn.style.color = "#111";
+    }
+
+    autoBtn.addEventListener('click', () => {
+        if(panoViewer) {
+            if(!autoRotateActive) {
+                panoViewer.startAutoRotate? panoViewer.startAutoRotate(1.2) : null;
+                autoRotateActive = true;
+                autoBtn.style.background = "#C8A96A";
+                autoBtn.style.color = "#111";
+            } else {
+                panoViewer.stopAutoRotate?.();
+                autoRotateActive = false;
+                autoBtn.style.background = "rgba(17,17,17,0.8)";
+                autoBtn.style.color = "#C8A96A";
+            }
+        }
+    });
+    
+    // Hotspot Helper Logic
+    let helperActive = false;
+    const helperBtn = document.getElementById('hotspotHelperBtn');
+    const coordPopup = document.getElementById('coordinatePopup');
+    const pitchDisplay = document.getElementById('coordPitch');
+    const yawDisplay = document.getElementById('coordYaw');
+    const copyBtn = document.getElementById('copyCoordsBtn');
+    const closePopupBtn = document.getElementById('closeCoordPopup');
+
+    helperBtn.addEventListener('click', () => {
+        helperActive = !helperActive;
+        if(helperActive) {
+            helperBtn.style.background = "#C8A96A";
+            helperBtn.style.color = "#111";
+            alert("Mode Pengatur Hotspot Aktif! Klik di mana saja pada gambar 360 untuk mengambil koordinat.");
+        } else {
+            helperBtn.style.background = "rgba(17,17,17,0.8)";
+            helperBtn.style.color = "#C8A96A";
+            coordPopup.style.display = 'none';
+        }
+    });
+
+    // Capture click on panorama
+    document.getElementById('panorama').addEventListener('mousedown', (e) => {
+        if(helperActive && panoViewer) {
+            // Wait a tiny bit for the view to settle if dragging
+            setTimeout(() => {
+                const pitch = panoViewer.getPitch().toFixed(2);
+                const yaw = panoViewer.getYaw().toFixed(2);
+                
+                pitchDisplay.innerText = pitch;
+                yawDisplay.innerText = yaw;
+                coordPopup.style.display = 'block';
+                
+                // Update Copy Button Data
+                copyBtn.onclick = () => {
+                    const jsonStr = `{ "pitch": ${pitch}, "yaw": ${yaw}, "type": "scene", "text": "Ke Scene Baru", "sceneId": "ganti_ini", "tooltip": "Ganti Ini" }`;
+                    navigator.clipboard.writeText(jsonStr).then(() => {
+                        alert("Koordinat disalin ke clipboard!");
+                    });
+                };
+            }, 100);
+        }
+    });
+
+    closePopupBtn.addEventListener('click', () => {
+        coordPopup.style.display = 'none';
+    });
+
+    // Sidebar toggles
+    document.getElementById('toggleSidebarBtn').addEventListener('click', () => {
+        document.getElementById('sidebar').classList.add('open');
+    });
+    document.getElementById('closeSidebar').addEventListener('click', () => {
+        document.getElementById('sidebar').classList.remove('open');
+    });
+    document.getElementById('closeInfo').addEventListener('click', () => {
+        document.getElementById('infoPanel').classList.remove('open');
+    });
+    // Mini map click
+    document.querySelectorAll('.mini-map span').forEach(el => {
+        el.addEventListener('click', (e) => {
+            const sceneId = el.dataset.scene;
+            if(sceneId) loadScene(sceneId, true);
+        });
+    });
+    // header scroll effect
+    window.addEventListener('scroll', () => {
+        const header = document.getElementById('mainHeader');
+        if(window.scrollY > 50) header.classList.add('scrolled');
+        else header.classList.remove('scrolled');
+    });
+    // Welcome Modal & GSAP
+    document.getElementById('startTourBtn').addEventListener('click', () => {
+        gsap.to("#welcomeModal", {
+            opacity: 0,
+            duration: 1,
+            onComplete: () => {
+                document.getElementById('welcomeModal').style.display = 'none';
+                // Play music if autoPlay is true in config
+                if (tourConfig.settings && tourConfig.settings.music && tourConfig.settings.music.autoPlay) {
+                    bgMusic.play().then(updateMusicUIState).catch(e => console.log("Autoplay blocked:", e));
+                }
+            }
+        });
+        
+        // Initial animations for UI
+        gsap.from(".header", { y: -100, opacity: 0, duration: 1, delay: 0.5 });
+        gsap.from(".logo-overlay", { x: -100, opacity: 0, duration: 1, delay: 0.5 });
+        gsap.from(".controls-panel", { x: 100, opacity: 0, duration: 1, delay: 0.8 });
+        gsap.from(".mini-map", { y: 100, opacity: 0, duration: 1, delay: 1 });
+        gsap.from(".toggle-sidebar", { x: -100, opacity: 0, duration: 1, delay: 1.2 });
+        gsap.from(".book-now-btn", { scale: 0, opacity: 0, duration: 0.8, delay: 1.5, ease: "back.out(1.7)" });
+    });
+
+    // Preload awal + sidebar build
+    initTour();
+    
+    // Custom styling for tooltip hover
+    setInterval(() => {
+        // perbaiki hotspot tooltip untuk style premium
+        document.querySelectorAll('.pnlm-hotspot').forEach(hs => {
+            if(!hs.getAttribute('data-custom')) {
+                hs.setAttribute('data-custom', 'true');
+                
+                // Ambil teks dari atribut tooltip (Pannellum menyimpan di sini)
+                const tooltipText = hs.dataset.tooltip || hs.title || "";
+                
+                hs.addEventListener('mouseenter', (e) => {
+                    if(tooltipText) {
+                        let tool = document.createElement('div');
+                        tool.className = 'custom-tooltip';
+                        tool.innerText = tooltipText;
+                        tool.style.position = 'fixed'; // Gunakan fixed agar tidak terpotong container
+                        tool.style.zIndex = 10000;
+                        document.body.appendChild(tool);
+                        
+                        const rect = hs.getBoundingClientRect();
+                        tool.style.left = (rect.left + rect.width/2 - tool.offsetWidth/2) + 'px';
+                        tool.style.top = (rect.top - 40) + 'px';
+                        hs._tooltip = tool;
+                    }
+                });
+                
+                hs.addEventListener('mouseleave', () => {
+                    if(hs._tooltip) {
+                        hs._tooltip.remove();
+                        hs._tooltip = null;
+                    }
+                });
+            }
+        });
+    }, 500); // Interval lebih cepat agar lebih responsif
+    
+    console.log("Virtual Tour 360° Harper Palembang Siap");
+</script>
+</body>
+</html>
