@@ -7,7 +7,7 @@
         "autoRotateSpeed": 1
     },
     "settings": {
-        "logo": "foto/Logo___Harper__WHITE_.png",
+        "logo": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262425/JUNIOR_SUITE_quh4li.png",
         "music": {
             "url": "music/The_Golden_Meridian.mp3",
             "autoPlay": true
@@ -35,9 +35,9 @@
     "scenes": {
         "exterior": {
             "title": "Harper Exterior",
-            "panorama": "foto/HOTEL.jpeg",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262422/HOTEL_oue6qj.jpg",
             "description": "Pemandangan megah gedung Harper Palembang dari sudut pandang 360 derajat, berlokasi strategis di pusat kota.",
-            "previewImg": "foto/HOTEL.jpeg",
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262422/HOTEL_oue6qj.jpg",
             "yaw": 10,
             "pitch": -15,
             "hfov": 110,
@@ -55,9 +55,9 @@
         "lobby": {
             "title": "Harper Lobby",
             "type": "equirectangular",
-            "panorama": "foto/Lobby New.jpeg",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262426/Lobby_New_yp52l3.jpg",
             "description": "Lobby mewah dengan sentuhan modern, area resepsionis yang ramah, dan lounge yang nyaman untuk bersantai.",
-            "previewImg": "foto/Lobby New.jpeg",
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262426/Lobby_New_yp52l3.jpg",
             "hotSpots": [
                 {
                     "pitch": -0.39,
@@ -96,9 +96,9 @@
         "receptions": {
             "title": "Receptions",
             "type": "equirectangular",
-            "panorama": "foto/receptionis.jpeg",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262430/receptionis_mnsawx.jpg",
             "description": "Layanan check-in 24 jam dengan staf profesional.",
-            "previewImg": "foto/receptionis.jpeg",
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262430/receptionis_mnsawx.jpg",
             "hfov": 100,
             "pitch": 0,
             "yaw": 0,
@@ -132,9 +132,9 @@
         "dlounge": {
             "title": "D'Lounge",
             "type": "equirectangular",
-            "panorama": "foto/dlounge.jpeg",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262421/dlounge_ugmuny.jpg",
             "description": "Area lounge yang nyaman untuk bersantai.",
-            "previewImg": "foto/dlounge.jpeg",
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262421/dlounge_ugmuny.jpg",
             "hotSpots": [
                 {
                     "pitch": -0.55,
@@ -173,9 +173,9 @@
         "crystal_mice": {
             "title": "Crystal Mice",
             "type": "equirectangular",
-            "panorama": "foto/crystal.jpeg",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262421/crystal_gs2gbj.jpg",
             "description": "Ruang pertemuan Crystal Mice.",
-            "previewImg": "foto/crystal.jpeg",
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262421/crystal_gs2gbj.jpg",
             "hotSpots": [
                 {
                     "pitch": -4.56,
@@ -190,9 +190,9 @@
         "koridor": {
             "title": "Koridor",
             "type": "equirectangular",
-            "panorama": "foto/KORIDOR.jpeg",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262426/KORIDOR_gt2kbb.jpg",
             "description": "Koridor utama menuju lift dan ruang pertemuan.",
-            "previewImg": "foto/KORIDOR.jpeg",
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262426/KORIDOR_gt2kbb.jpg",
             "hotSpots": [
                 {
                     "pitch": 1.07,
@@ -239,9 +239,9 @@
         "shapire_mice": {
             "title": "Shapire Mice",
             "type": "equirectangular",
-            "panorama": "foto/shapire.jpeg",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262430/shapire_a04cqp.jpg",
             "description": "Ruang pertemuan Shapire Mice.",
-            "previewImg": "foto/shapire.jpeg",
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262430/shapire_a04cqp.jpg",
             "hfov": 100,
             "pitch": 0,
             "yaw": 0,
@@ -259,9 +259,9 @@
         "emerald_mice": {
             "title": "Emerald Mice",
             "type": "equirectangular",
-            "panorama": "foto/Emerald.jpeg",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262423/emerald_ny8yhj.jpg",
             "description": "Ruang pertemuan Emerald Mice.",
-            "previewImg": "foto/Emerald.jpeg",
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262423/emerald_ny8yhj.jpg",
             "hfov": 100,
             "pitch": 0,
             "yaw": 0,
@@ -279,9 +279,9 @@
         "jadiete_mice": {
             "title": "Jadiete Mice",
             "type": "equirectangular",
-            "panorama": "foto/jadiete.jpeg",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262426/jadiete_pcc3rq.jpg",
             "description": "Ruang pertemuan Jadiete Mice.",
-            "previewImg": "foto/jadiete.jpeg",
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262426/jadiete_pcc3rq.jpg",
             "hotSpots": [
                 {
                     "pitch": 0,
@@ -296,9 +296,9 @@
         "lift": {
             "title": "Lift",
             "type": "equirectangular",
-            "panorama": "foto/LOBBY_360.jpg",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262427/LOBBY_360_oyudxr.jpg",
             "description": "Lift tamu Harper Palembang.",
-            "previewImg": "foto/LOBBY_360.jpg",
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262427/LOBBY_360_oyudxr.jpg",
             "hotSpots": [
                 {
                     "pitch": 0,
@@ -321,9 +321,9 @@
         "floor_3": {
             "title": "Lantai 3",
             "type": "equirectangular",
-            "panorama": "foto/Floor 3.jpeg",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262424/Floor_3_a8szn3.jpg",
             "description": "Area publik di Lantai 3.",
-            "previewImg": "foto/Floor 3.jpeg",
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262424/Floor_3_a8szn3.jpg",
             "hotSpots": [
                 {
                     "pitch": -2.2,
@@ -370,9 +370,9 @@
         "dcentral": {
             "title": "D'Central",
             "type": "equirectangular",
-            "panorama": "foto/dcentral.jpeg",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262421/dcentral_kjzokz.jpg",
             "description": "Restoran D'Central.",
-            "previewImg": "foto/dcentral.jpeg",
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262421/dcentral_kjzokz.jpg",
             "hotSpots": [
                 {
                     "pitch": 0,
@@ -387,9 +387,9 @@
         "ballroom": {
             "title": "Ballroom",
             "type": "equirectangular",
-            "panorama": "foto/ballroom.jpeg",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262421/ballroom_qifjfa.jpg",
             "description": "Area Ballroom Harper Palembang.",
-            "previewImg": "foto/ballroom.jpeg",
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262421/ballroom_qifjfa.jpg",
             "hotSpots": [
                 {
                     "pitch": 0,
@@ -420,9 +420,9 @@
         "imperial": {
             "title": "Imperial Ballroom",
             "type": "equirectangular",
-            "panorama": "foto/Floor 3.jpeg",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262424/Floor_3_a8szn3.jpg",
             "description": "Ruang Ballroom Imperial.",
-            "previewImg": "foto/Floor 3.jpeg",
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262424/Floor_3_a8szn3.jpg",
             "hotSpots": [
                 {
                     "pitch": 0,
@@ -437,9 +437,9 @@
         "dynasti": {
             "title": "Dynasti Ballroom",
             "type": "equirectangular",
-            "panorama": "foto/LOBBY_360.jpg",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262427/LOBBY_360_oyudxr.jpg",
             "description": "Ruang Ballroom Dynasti.",
-            "previewImg": "foto/LOBBY_360.jpg",
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262427/LOBBY_360_oyudxr.jpg",
             "hotSpots": [
                 {
                     "pitch": 0,
@@ -454,9 +454,9 @@
         "pool_area": {
             "title": "Pool Area",
             "type": "equirectangular",
-            "panorama": "foto/POOLAREA.jpeg",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262429/POOLAREA_xcppg3.jpg",
             "description": "Area Kolam Renang dan Spa.",
-            "previewImg": "foto/POOLAREA.jpeg",
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262429/POOLAREA_xcppg3.jpg",
             "hotSpots": [
                 {
                     "pitch": -4.61,
@@ -487,9 +487,9 @@
         "pool": {
             "title": "Kolam Renang",
             "type": "equirectangular",
-            "panorama": "foto/POOL.jpeg",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262430/POOL_hdwvyi.jpg",
             "description": "Kolam renang outdoor yang menyegarkan.",
-            "previewImg": "foto/POOL.jpeg",
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262430/POOL_hdwvyi.jpg",
             "hotSpots": [
                 {
                     "pitch": 0,
@@ -504,9 +504,9 @@
         "spa_gym": {
             "title": "Spa & Gym",
             "type": "equirectangular",
-            "panorama": "foto/spa&gym.jpeg",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262430/spa_gym_e6ybq5.jpg",
             "description": "Fasilitas relaksasi dan kebugaran.",
-            "previewImg": "foto/spa&gym.jpeg",
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262430/spa_gym_e6ybq5.jpg",
             "hotSpots": [
                 {
                     "pitch": 0,
@@ -521,9 +521,9 @@
         "room": {
             "title": "Area Kamar",
             "type": "equirectangular",
-            "panorama": "foto/room.jpeg",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262431/room_bzdsls.jpg",
             "description": "Pilih tipe kamar yang anda inginkan.",
-            "previewImg": "foto/room.jpeg",
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262431/room_bzdsls.jpg",
             "hotSpots": [
                 {
                     "pitch": -1.35,
@@ -570,9 +570,9 @@
         "deluxe_room": {
             "title": "Deluxe Room",
             "type": "equirectangular",
-            "panorama": "foto/dlx.jpeg",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262421/dlx_ji2fsb.jpg",
             "description": "Kamar Deluxe yang nyaman.",
-            "previewImg": "foto/dlx.jpeg",
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262421/dlx_ji2fsb.jpg",
             "hotSpots": [
                 {
                     "pitch": 0,
@@ -587,9 +587,9 @@
         "deluxe_premier": {
             "title": "Deluxe Premier",
             "type": "equirectangular",
-            "panorama": "foto/dlx.jpeg",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262421/dlx_ji2fsb.jpg",
             "description": "Kamar Deluxe Premier yang lebih luas.",
-            "previewImg": "foto/dlx.jpeg",
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262421/dlx_ji2fsb.jpg",
             "hotSpots": [
                 {
                     "pitch": 0,
@@ -604,9 +604,9 @@
         "exe_suite": {
             "title": "Executive Suite",
             "type": "equirectangular",
-            "panorama": "foto/exe.suite.jpeg",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262423/exe.suite_z4vahw.jpg",
             "description": "Kamar Executive Suite yang mewah.",
-            "previewImg": "foto/exe.suite.jpeg",
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262423/exe.suite_z4vahw.jpg",
             "hotSpots": [
                 {
                     "pitch": 0,
@@ -621,9 +621,9 @@
         "junior_suite": {
             "title": "Junior Suite",
             "type": "equirectangular",
-            "panorama": "foto/exe.suite.jpeg",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262425/JUNIOR_SUITE_quh4li.png",
             "description": "Junior Suite dengan fasilitas premium.",
-            "previewImg": "foto/exe.suite.jpeg",
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262425/JUNIOR_SUITE_quh4li.png",
             "hotSpots": [
                 {
                     "pitch": -3.09,
@@ -638,9 +638,9 @@
         "koridor_ballroom": {
             "title": "Koridor Ballroom",
             "type": "equirectangular",
-            "panorama": "foto/koridorballroom.jpg",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262427/koridorballroom_hxsm7y.jpg",
             "description": "Koridor utama menuju area Ballroom Harper Palembang.",
-            "previewImg": "foto/koridorballroom.jpg",
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262427/koridorballroom_hxsm7y.jpg",
             "hotSpots": [
                 {
                     "pitch": -2.07,
