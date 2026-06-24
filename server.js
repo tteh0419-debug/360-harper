@@ -64,31 +64,34 @@ const firebaseConfig = {
 let db = null;
 let useFirebase = false;
 
-try {
-    if (admin && firebaseConfig.project_id && firebaseConfig.private_key) {
-        admin.initializeApp({
-            credential: admin.credential.cert(firebaseConfig)
-        });
-        db = admin.firestore();
-        useFirebase = true;
-        console.log("🔥 Firebase berhasil diinisialisasi");
-        
-        // One-time migration from old config path to new path
-        const oldDoc = await db.collection('config').doc('main').get();
-        const newDoc = await db.collection('settings').doc('config').get();
-        if (oldDoc.exists && !newDoc.exists) {
-            await db.collection('settings').doc('config').set(oldDoc.data());
-            console.log("🔄 Config migrated from config/main to settings/config");
+// Initialize Firebase (wrapped in async function to avoid top-level await issues)
+(async function initFirebase() {
+    try {
+        if (admin && firebaseConfig.project_id && firebaseConfig.private_key) {
+            admin.initializeApp({
+                credential: admin.credential.cert(firebaseConfig)
+            });
+            db = admin.firestore();
+            useFirebase = true;
+            console.log("🔥 Firebase berhasil diinisialisasi");
+            
+            // One-time migration from old config path to new path
+            const oldDoc = await db.collection('config').doc('main').get();
+            const newDoc = await db.collection('settings').doc('config').get();
+            if (oldDoc.exists && !newDoc.exists) {
+                await db.collection('settings').doc('config').set(oldDoc.data());
+                console.log("🔄 Config migrated from config/main to settings/config");
+            }
+        } else if (!admin) {
+            console.log("⚠️ firebase-admin tidak tersedia, menggunakan file JSON sebagai fallback");
+        } else {
+            console.log("⚠️ Firebase tidak dikonfigurasi, menggunakan file JSON sebagai fallback");
         }
-    } else if (!admin) {
-        console.log("⚠️ firebase-admin tidak tersedia, menggunakan file JSON sebagai fallback");
-    } else {
-        console.log("⚠️ Firebase tidak dikonfigurasi, menggunakan file JSON sebagai fallback");
+    } catch (error) {
+        console.error("❌ Gagal inisialisasi Firebase:", error);
+        console.log("⚠️ Menggunakan file JSON sebagai fallback");
     }
-} catch (error) {
-    console.error("❌ Gagal inisialisasi Firebase:", error);
-    console.log("⚠️ Menggunakan file JSON sebagai fallback");
-}
+})();
 
 // Konfigurasi Cloudinary
 cloudinary.config({
