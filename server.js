@@ -45,7 +45,7 @@ async function pathExists(filePath) {
 }
 
 const app = express();
-const PORT = process.env.PORT || 3009;
+const PORT = process.env.PORT || 3011;
 
 // Inisialisasi Firebase Admin
 const firebaseConfig = {
@@ -90,25 +90,14 @@ cloudinary.config({
 });
 
 // Konfigurasi Multer untuk menyimpan file sementara di memory sebelum diupload ke Cloudinary
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        if (file.fieldname === 'music') {
-            cb(null, 'music/')
-        } else {
-            cb(null, 'foto/')
-        }
-    },
-    filename: function (req, file, cb) {
-        // Sanitize filename: remove spaces and special characters
-        const sanitizedName = file.originalname.replace(/[^a-zA-Z0-9.]/g, '_');
-        cb(null, sanitizedName)
-    }
-});
+const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-// Ensure upload directories exist
-ensureDir(path.join(__dirname, 'foto'));
-ensureDir(path.join(__dirname, 'music'));
+// Only ensure upload directories exist if we're not using Firebase (local development only)
+if (!useFirebase || !db) {
+  ensureDir(path.join(__dirname, 'foto'));
+  ensureDir(path.join(__dirname, 'music'));
+}
 
 // Path to users file (fallback)
 const USERS_FILE = path.join(__dirname, 'users.json');
@@ -498,6 +487,14 @@ app.post('/api/delete-file', async (req, res) => {
             return res.status(400).json({ success: false, message: 'Path file tidak ditemukan' });
         }
 
+        // If using Firebase/Cloudinary, we don't need to delete local files
+        // Just return success (or you could add Cloudinary delete logic here if needed)
+        if (useFirebase && db) {
+            res.json({ success: true, message: 'File tidak perlu dihapus dari server (menggunakan Cloudinary)' });
+            return;
+        }
+
+        // Local file deletion (only for non-Firebase mode)
         const normalizedPath = filePath.replace(/\\/g, '/');
         const allowedFolders = ['foto/', 'music/'];
         const isAllowed = allowedFolders.some(folder => normalizedPath.startsWith(folder));
