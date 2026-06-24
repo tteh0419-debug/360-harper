@@ -180,12 +180,20 @@
     </div>
 
     <script>
+        // Helper function to get API URL
+        function getApiUrl(endpoint) {
+            if (window.location.protocol.startsWith('http')) {
+                return window.location.origin + endpoint;
+            }
+            return 'http://localhost:3000' + endpoint;
+        }
+
         // Check if already logged in
         if (localStorage.getItem('cms_logged_in') === 'true') {
             window.location.href = 'index.html';
         }
 
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const user = document.getElementById('username').value.trim();
             const pass = document.getElementById('password').value.trim();
@@ -196,26 +204,33 @@
             btn.disabled = true;
             btn.innerText = 'MEMPROSES...';
 
-            // Simulasi loading sedikit agar terlihat pro
-            setTimeout(() => {
-                // Role-Based Login
-                // Admin: user=admin, pass=Hpalm123
-                // Client: user=client, pass=Harper360
-                if(user === 'admin' && pass === 'Hpalm123') {
+            try {
+                const response = await fetch(getApiUrl('/api/login'), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username: user, password: pass })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
                     localStorage.setItem('cms_logged_in', 'true');
-                    localStorage.setItem('cms_role', 'admin');
-                    window.location.href = 'index.html';
-                } else if(user === 'client' && pass === 'Harper360') {
-                    localStorage.setItem('cms_logged_in', 'true');
-                    localStorage.setItem('cms_role', 'client');
+                    localStorage.setItem('cms_role', data.user.role);
+                    localStorage.setItem('cms_user_id', data.user.id);
+                    localStorage.setItem('cms_username', data.user.username);
                     window.location.href = 'index.html';
                 } else {
-                    error.style.display = 'block';
-                    btn.disabled = false;
-                    btn.innerText = 'MASUK SEKARANG';
-                    document.getElementById('password').value = '';
+                    throw new Error(data.message);
                 }
-            }, 800);
+            } catch (err) {
+                error.style.display = 'block';
+                error.innerText = err.message || 'Username atau password salah!';
+                btn.disabled = false;
+                btn.innerText = 'MASUK SEKARANG';
+                document.getElementById('password').value = '';
+            }
         });
     </script>
 </body>

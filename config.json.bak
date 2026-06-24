@@ -7,13 +7,20 @@
         "autoRotateSpeed": 1
     },
     "settings": {
-        "logo": "foto/Logo___Harper__WHITE_.png",
+        "logo": {
+            "url": "foto/logo.png",
+            "size": 129,
+            "opacity": 100,
+            "dropShadow": true,
+            "position": "top-left",
+            "effects": []
+        },
         "music": {
             "url": "music/The_Golden_Meridian.mp3",
             "autoPlay": true
         },
         "footer": {
-            "copyright": "HARPER PALEMBANG — RCHIPELAGO INTERNATIONAL",
+            "copyright": "HARPER PALEMBANG — ARCHIPELAGO INTERNATIONAL",
             "socials": [
                 {
                     "icon": "fab fa-instagram",
@@ -35,12 +42,13 @@
     "scenes": {
         "exterior": {
             "title": "Harper Exterior",
+            "type": "equirectangular",
             "panorama": "foto/HOTEL.jpeg",
             "description": "Pemandangan megah gedung Harper Palembang dari sudut pandang 360 derajat, berlokasi strategis di pusat kota.",
             "previewImg": "foto/HOTEL.jpeg",
-            "yaw": 10,
-            "pitch": -15,
             "hfov": 110,
+            "pitch": -15,
+            "yaw": 10,
             "hotSpots": [
                 {
                     "pitch": -36.69,
@@ -58,10 +66,13 @@
             "panorama": "foto/Lobby New.jpeg",
             "description": "Lobby mewah dengan sentuhan modern, area resepsionis yang ramah, dan lounge yang nyaman untuk bersantai.",
             "previewImg": "foto/Lobby New.jpeg",
+            "hfov": 100,
+            "pitch": 0,
+            "yaw": 0,
             "hotSpots": [
                 {
-                    "pitch": -0.39,
-                    "yaw": -26.64,
+                    "pitch": 0.71,
+                    "yaw": -31.26,
                     "type": "scene",
                     "text": "Ke Receptions",
                     "sceneId": "receptions",
@@ -126,6 +137,14 @@
                     "text": "Ke Crystal Mice",
                     "sceneId": "crystal_mice",
                     "tooltip": "Ke Crystal Mice"
+                },
+                {
+                    "pitch": -0.77,
+                    "yaw": -177.8,
+                    "type": "scene",
+                    "text": "Ke D'Lounge",
+                    "sceneId": "dlounge",
+                    "tooltip": "Ke D'Lounge"
                 }
             ]
         },
@@ -135,6 +154,9 @@
             "panorama": "foto/dlounge.jpeg",
             "description": "Area lounge yang nyaman untuk bersantai.",
             "previewImg": "foto/dlounge.jpeg",
+            "hfov": 100,
+            "pitch": 0,
+            "yaw": 0,
             "hotSpots": [
                 {
                     "pitch": -0.55,
@@ -176,6 +198,9 @@
             "panorama": "foto/crystal.jpeg",
             "description": "Ruang pertemuan Crystal Mice.",
             "previewImg": "foto/crystal.jpeg",
+            "hfov": 100,
+            "pitch": 0,
+            "yaw": 0,
             "hotSpots": [
                 {
                     "pitch": -4.56,
@@ -193,6 +218,9 @@
             "panorama": "foto/KORIDOR.jpeg",
             "description": "Koridor utama menuju lift dan ruang pertemuan.",
             "previewImg": "foto/KORIDOR.jpeg",
+            "hfov": 100,
+            "pitch": 0,
+            "yaw": 0,
             "hotSpots": [
                 {
                     "pitch": 1.07,
@@ -227,8 +255,8 @@
                     "tooltip": "Lobby"
                 },
                 {
-                    "pitch": -1.79,
-                    "yaw": -94.38,
+                    "pitch": -0.12,
+                    "yaw": -100.94,
                     "type": "scene",
                     "text": "Ke Lantai 3",
                     "sceneId": "floor_3",
@@ -247,8 +275,8 @@
             "yaw": 0,
             "hotSpots": [
                 {
-                    "pitch": -7.09,
-                    "yaw": -49.69,
+                    "pitch": -14.66,
+                    "yaw": 120.68,
                     "type": "scene",
                     "text": "Kembali ke Koridor",
                     "sceneId": "koridor",
@@ -267,8 +295,8 @@
             "yaw": 0,
             "hotSpots": [
                 {
-                    "pitch": 0,
-                    "yaw": 180,
+                    "pitch": -10.02,
+                    "yaw": -114.04,
                     "type": "scene",
                     "text": "Kembali ke Koridor",
                     "sceneId": "koridor",
@@ -282,10 +310,13 @@
             "panorama": "foto/jadiete.jpeg",
             "description": "Ruang pertemuan Jadiete Mice.",
             "previewImg": "foto/jadiete.jpeg",
+            "hfov": 100,
+            "pitch": 0,
+            "yaw": 0,
             "hotSpots": [
                 {
-                    "pitch": 0,
-                    "yaw": 180,
+                    "pitch": -0.31,
+                    "yaw": 165.4,
                     "type": "scene",
                     "text": "Kembali ke Koridor",
                     "sceneId": "koridor",
@@ -299,6 +330,9 @@
             "panorama": "foto/LOBBY_360.jpg",
             "description": "Lift tamu Harper Palembang.",
             "previewImg": "foto/LOBBY_360.jpg",
+            "hfov": 100,
+            "pitch": 0,
+            "yaw": 0,
             "hotSpots": [
                 {
                     "pitch": 0,
@@ -324,10 +358,13 @@
             "panorama": "foto/Floor 3.jpeg",
             "description": "Area publik di Lantai 3.",
             "previewImg": "foto/Floor 3.jpeg",
+            "hfov": 100,
+            "pitch": 0,
+            "yaw": 0,
             "hotSpots": [
                 {
-                    "pitch": -2.2,
-                    "yaw": 48.57,
+                    "pitch": -1.66,
+                    "yaw": 46.09,
                     "type": "scene",
                     "text": "Ke Kamar",
                     "sceneId": "room",
@@ -350,20 +387,12 @@
                     "tooltip": "Koridor Ballroom"
                 },
                 {
-                    "pitch": -3.18,
-                    "yaw": 32.09,
+                    "pitch": -1.8,
+                    "yaw": 33.54,
                     "type": "scene",
                     "text": "Ke Area Kolam Renang",
                     "sceneId": "pool_area",
                     "tooltip": "Pool Area"
-                },
-                {
-                    "pitch": -17.54,
-                    "yaw": -75,
-                    "type": "scene",
-                    "text": "Ke Scene Baru",
-                    "sceneId": "exterior",
-                    "tooltip": "Ganti Deskripsi Ini"
                 }
             ]
         },
@@ -373,10 +402,13 @@
             "panorama": "foto/dcentral.jpeg",
             "description": "Restoran D'Central.",
             "previewImg": "foto/dcentral.jpeg",
+            "hfov": 100,
+            "pitch": 0,
+            "yaw": 0,
             "hotSpots": [
                 {
-                    "pitch": 0,
-                    "yaw": 180,
+                    "pitch": -1.47,
+                    "yaw": 172.4,
                     "type": "scene",
                     "text": "Kembali ke Lantai 3",
                     "sceneId": "floor_3",
@@ -387,9 +419,12 @@
         "ballroom": {
             "title": "Ballroom",
             "type": "equirectangular",
-            "panorama": "foto/ballroom.jpeg",
+            "panorama": "foto/grand_ballroom.jpeg",
             "description": "Area Ballroom Harper Palembang.",
-            "previewImg": "foto/ballroom.jpeg",
+            "previewImg": "foto/grand_ballroom.jpeg",
+            "hfov": 100,
+            "pitch": 0,
+            "yaw": 0,
             "hotSpots": [
                 {
                     "pitch": 0,
@@ -400,16 +435,16 @@
                     "tooltip": "Koridor Ballroom"
                 },
                 {
-                    "pitch": 0,
-                    "yaw": 45,
+                    "pitch": 0.71,
+                    "yaw": 20.21,
                     "type": "scene",
                     "text": "Ke Imperial",
                     "sceneId": "imperial",
                     "tooltip": "Imperial"
                 },
                 {
-                    "pitch": 0,
-                    "yaw": -45,
+                    "pitch": -0.15,
+                    "yaw": 60.52,
                     "type": "scene",
                     "text": "Ke Dynasti",
                     "sceneId": "dynasti",
@@ -423,6 +458,9 @@
             "panorama": "foto/Floor 3.jpeg",
             "description": "Ruang Ballroom Imperial.",
             "previewImg": "foto/Floor 3.jpeg",
+            "hfov": 100,
+            "pitch": 0,
+            "yaw": 0,
             "hotSpots": [
                 {
                     "pitch": 0,
@@ -440,6 +478,9 @@
             "panorama": "foto/LOBBY_360.jpg",
             "description": "Ruang Ballroom Dynasti.",
             "previewImg": "foto/LOBBY_360.jpg",
+            "hfov": 100,
+            "pitch": 0,
+            "yaw": 0,
             "hotSpots": [
                 {
                     "pitch": 0,
@@ -457,26 +498,29 @@
             "panorama": "foto/POOLAREA.jpeg",
             "description": "Area Kolam Renang dan Spa.",
             "previewImg": "foto/POOLAREA.jpeg",
+            "hfov": 100,
+            "pitch": 0,
+            "yaw": 0,
             "hotSpots": [
                 {
-                    "pitch": -4.61,
-                    "yaw": -102,
+                    "pitch": -1.97,
+                    "yaw": -120.27,
                     "type": "scene",
                     "text": "Ke Kolam Renang",
                     "sceneId": "pool",
                     "tooltip": "Pool"
                 },
                 {
-                    "pitch": 0,
-                    "yaw": -45,
+                    "pitch": -1.54,
+                    "yaw": -47.9,
                     "type": "scene",
                     "text": "Ke Spa & Gym",
                     "sceneId": "spa_gym",
                     "tooltip": "Spa & Gym"
                 },
                 {
-                    "pitch": 0,
-                    "yaw": 180,
+                    "pitch": -1.41,
+                    "yaw": 125.61,
                     "type": "scene",
                     "text": "Kembali ke Lantai 3",
                     "sceneId": "floor_3",
@@ -490,31 +534,61 @@
             "panorama": "foto/POOL.jpeg",
             "description": "Kolam renang outdoor yang menyegarkan.",
             "previewImg": "foto/POOL.jpeg",
+            "hfov": 100,
+            "pitch": 0,
+            "yaw": 0,
             "hotSpots": [
                 {
-                    "pitch": 0,
-                    "yaw": 180,
+                    "pitch": -4.47,
+                    "yaw": 120.19,
                     "type": "scene",
                     "text": "Kembali ke Pool Area",
                     "sceneId": "pool_area",
                     "tooltip": "Pool Area"
+                },
+                {
+                    "pitch": -4.37,
+                    "yaw": 70.88,
+                    "type": "scene",
+                    "text": "Ke Spa & Gym",
+                    "sceneId": "spa_gym",
+                    "tooltip": "Ke Spa & Gym"
                 }
             ]
         },
         "spa_gym": {
             "title": "Spa & Gym",
             "type": "equirectangular",
-            "panorama": "foto/spa&gym.jpeg",
+            "panorama": "foto/spa___Gym.jpeg",
             "description": "Fasilitas relaksasi dan kebugaran.",
-            "previewImg": "foto/spa&gym.jpeg",
+            "previewImg": "foto/spa___Gym.jpeg",
+            "hfov": 100,
+            "pitch": 0,
+            "yaw": 0,
             "hotSpots": [
                 {
-                    "pitch": 0,
-                    "yaw": 180,
+                    "pitch": -1.26,
+                    "yaw": 94.83,
                     "type": "scene",
                     "text": "Kembali ke Pool Area",
                     "sceneId": "pool_area",
                     "tooltip": "Pool Area"
+                },
+                {
+                    "pitch": -7.72,
+                    "yaw": -13.28,
+                    "type": "scene",
+                    "text": "Ke SPA",
+                    "sceneId": "SPA",
+                    "tooltip": "Ke SPA"
+                },
+                {
+                    "pitch": -7.4,
+                    "yaw": 14.92,
+                    "type": "scene",
+                    "text": "Ke gym harper",
+                    "sceneId": "gym harper",
+                    "tooltip": "Ke gym harper"
                 }
             ]
         },
@@ -524,6 +598,9 @@
             "panorama": "foto/room.jpeg",
             "description": "Pilih tipe kamar yang anda inginkan.",
             "previewImg": "foto/room.jpeg",
+            "hfov": 100,
+            "pitch": 0,
+            "yaw": 0,
             "hotSpots": [
                 {
                     "pitch": -1.35,
@@ -542,16 +619,16 @@
                     "tooltip": "Deluxe Premier"
                 },
                 {
-                    "pitch": 0.26,
-                    "yaw": 110.42,
+                    "pitch": -0.05,
+                    "yaw": 114.82,
                     "type": "scene",
                     "text": "Executive Suite",
                     "sceneId": "exe_suite",
                     "tooltip": "Executive Suite"
                 },
                 {
-                    "pitch": 1.03,
-                    "yaw": 113.77,
+                    "pitch": 0.55,
+                    "yaw": 111.26,
                     "type": "scene",
                     "text": "Junior Suite",
                     "sceneId": "junior_suite",
@@ -573,6 +650,9 @@
             "panorama": "foto/dlx.jpeg",
             "description": "Kamar Deluxe yang nyaman.",
             "previewImg": "foto/dlx.jpeg",
+            "hfov": 100,
+            "pitch": 0,
+            "yaw": 0,
             "hotSpots": [
                 {
                     "pitch": 0,
@@ -590,6 +670,9 @@
             "panorama": "foto/dlx.jpeg",
             "description": "Kamar Deluxe Premier yang lebih luas.",
             "previewImg": "foto/dlx.jpeg",
+            "hfov": 100,
+            "pitch": 0,
+            "yaw": 0,
             "hotSpots": [
                 {
                     "pitch": 0,
@@ -607,6 +690,9 @@
             "panorama": "foto/exe.suite.jpeg",
             "description": "Kamar Executive Suite yang mewah.",
             "previewImg": "foto/exe.suite.jpeg",
+            "hfov": 100,
+            "pitch": 0,
+            "yaw": 0,
             "hotSpots": [
                 {
                     "pitch": 0,
@@ -624,10 +710,13 @@
             "panorama": "foto/exe.suite.jpeg",
             "description": "Junior Suite dengan fasilitas premium.",
             "previewImg": "foto/exe.suite.jpeg",
+            "hfov": 100,
+            "pitch": 0,
+            "yaw": 0,
             "hotSpots": [
                 {
-                    "pitch": -3.09,
-                    "yaw": -157.82,
+                    "pitch": 0,
+                    "yaw": 180,
                     "type": "scene",
                     "text": "Kembali ke Area Kamar",
                     "sceneId": "room",
@@ -641,10 +730,13 @@
             "panorama": "foto/koridorballroom.jpg",
             "description": "Koridor utama menuju area Ballroom Harper Palembang.",
             "previewImg": "foto/koridorballroom.jpg",
+            "hfov": 100,
+            "pitch": 0,
+            "yaw": 0,
             "hotSpots": [
                 {
-                    "pitch": -2.07,
-                    "yaw": 32.11,
+                    "pitch": -1.83,
+                    "yaw": 32.42,
                     "type": "scene",
                     "text": "Ke Ballroom",
                     "sceneId": "ballroom",
@@ -657,6 +749,62 @@
                     "text": "Kembali ke Lantai 3",
                     "sceneId": "floor_3",
                     "tooltip": "Lantai 3"
+                }
+            ]
+        },
+        "SPA": {
+            "title": "SPA",
+            "type": "equirectangular",
+            "panorama": "foto/SPA_HARPER.jpeg",
+            "description": "",
+            "previewImg": "foto/SPA_HARPER.jpeg",
+            "hfov": 100,
+            "pitch": 0,
+            "yaw": 0,
+            "hotSpots": [
+                {
+                    "pitch": -1.25,
+                    "yaw": 60.74,
+                    "type": "scene",
+                    "text": "Ke Spa & Gym",
+                    "sceneId": "spa_gym",
+                    "tooltip": "Ke Spa & Gym"
+                }
+            ]
+        },
+        "gym harper": {
+            "title": "gym harper",
+            "type": "equirectangular",
+            "panorama": "foto/gym_harper.jpeg",
+            "description": "",
+            "previewImg": "foto/gym_harper.jpeg",
+            "hfov": 100,
+            "pitch": 0,
+            "yaw": 0,
+            "hotSpots": [
+                {
+                    "pitch": -0.86,
+                    "yaw": 135.7,
+                    "type": "scene",
+                    "text": "Ke SPA",
+                    "sceneId": "SPA",
+                    "tooltip": "Ke SPA"
+                },
+                {
+                    "pitch": 0.01,
+                    "yaw": 66.49,
+                    "type": "scene",
+                    "text": "Ke Spa & Gym",
+                    "sceneId": "spa_gym",
+                    "tooltip": "Ke Spa & Gym"
+                },
+                {
+                    "pitch": 0.06,
+                    "yaw": 24.8,
+                    "type": "scene",
+                    "text": "Ke Pool Area",
+                    "sceneId": "pool_area",
+                    "tooltip": "Ke Pool Area"
                 }
             ]
         }

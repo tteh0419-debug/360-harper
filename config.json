@@ -7,13 +7,22 @@
         "autoRotateSpeed": 1
     },
     "settings": {
-        "logo": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262425/JUNIOR_SUITE_quh4li.png",
+        "logo": {
+            "url": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275816/JUNIOR_SUITE_b6kkfj.png",
+            "size": 67,
+            "opacity": 100,
+            "dropShadow": true,
+            "position": "top-center",
+            "effects": [
+                "hoverBlur"
+            ]
+        },
         "music": {
-            "url": "music/The_Golden_Meridian.mp3",
+            "url": "https://res.cloudinary.com/dn9ulmxic/video/upload/v1782275830/The_Golden_Meridian.mp3",
             "autoPlay": true
         },
         "footer": {
-            "copyright": "HARPER PALEMBANG — RCHIPELAGO INTERNATIONAL",
+            "copyright": "HARPER PALEMBANG — ARCHIPELAGO INTERNATIONAL",
             "socials": [
                 {
                     "icon": "fab fa-instagram",
@@ -35,12 +44,13 @@
     "scenes": {
         "exterior": {
             "title": "Harper Exterior",
-            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262422/HOTEL_oue6qj.jpg",
+            "type": "equirectangular",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275813/HOTEL_ignrjr.jpg",
             "description": "Pemandangan megah gedung Harper Palembang dari sudut pandang 360 derajat, berlokasi strategis di pusat kota.",
-            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262422/HOTEL_oue6qj.jpg",
-            "yaw": 10,
-            "pitch": -15,
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275813/HOTEL_ignrjr.jpg",
             "hfov": 110,
+            "pitch": -15,
+            "yaw": 10,
             "hotSpots": [
                 {
                     "pitch": -36.69,
@@ -55,13 +65,16 @@
         "lobby": {
             "title": "Harper Lobby",
             "type": "equirectangular",
-            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262426/Lobby_New_yp52l3.jpg",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275818/Lobby_New_yafapr.jpg",
             "description": "Lobby mewah dengan sentuhan modern, area resepsionis yang ramah, dan lounge yang nyaman untuk bersantai.",
-            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262426/Lobby_New_yp52l3.jpg",
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275818/Lobby_New_yafapr.jpg",
+            "hfov": 100,
+            "pitch": 0,
+            "yaw": 0,
             "hotSpots": [
                 {
-                    "pitch": -0.39,
-                    "yaw": -26.64,
+                    "pitch": 0.71,
+                    "yaw": -31.26,
                     "type": "scene",
                     "text": "Ke Receptions",
                     "sceneId": "receptions",
@@ -96,9 +109,9 @@
         "receptions": {
             "title": "Receptions",
             "type": "equirectangular",
-            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262430/receptionis_mnsawx.jpg",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275825/receptionis_fzvomf.jpg",
             "description": "Layanan check-in 24 jam dengan staf profesional.",
-            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262430/receptionis_mnsawx.jpg",
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275825/receptionis_fzvomf.jpg",
             "hfov": 100,
             "pitch": 0,
             "yaw": 0,
@@ -126,15 +139,26 @@
                     "text": "Ke Crystal Mice",
                     "sceneId": "crystal_mice",
                     "tooltip": "Ke Crystal Mice"
+                },
+                {
+                    "pitch": -0.77,
+                    "yaw": -177.8,
+                    "type": "scene",
+                    "text": "Ke D'Lounge",
+                    "sceneId": "dlounge",
+                    "tooltip": "Ke D'Lounge"
                 }
             ]
         },
         "dlounge": {
             "title": "D'Lounge",
             "type": "equirectangular",
-            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262421/dlounge_ugmuny.jpg",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275803/dlounge_dmpwmd.jpg",
             "description": "Area lounge yang nyaman untuk bersantai.",
-            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262421/dlounge_ugmuny.jpg",
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275803/dlounge_dmpwmd.jpg",
+            "hfov": 100,
+            "pitch": 0,
+            "yaw": 0,
             "hotSpots": [
                 {
                     "pitch": -0.55,
@@ -173,9 +197,12 @@
         "crystal_mice": {
             "title": "Crystal Mice",
             "type": "equirectangular",
-            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262421/crystal_gs2gbj.jpg",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275802/crystal_tbnxnq.jpg",
             "description": "Ruang pertemuan Crystal Mice.",
-            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262421/crystal_gs2gbj.jpg",
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275802/crystal_tbnxnq.jpg",
+            "hfov": 100,
+            "pitch": 0,
+            "yaw": 0,
             "hotSpots": [
                 {
                     "pitch": -4.56,
@@ -190,9 +217,12 @@
         "koridor": {
             "title": "Koridor",
             "type": "equirectangular",
-            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262426/KORIDOR_gt2kbb.jpg",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275817/KORIDOR_cnp2do.jpg",
             "description": "Koridor utama menuju lift dan ruang pertemuan.",
-            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262426/KORIDOR_gt2kbb.jpg",
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275817/KORIDOR_cnp2do.jpg",
+            "hfov": 100,
+            "pitch": 0,
+            "yaw": 0,
             "hotSpots": [
                 {
                     "pitch": 1.07,
@@ -227,8 +257,8 @@
                     "tooltip": "Lobby"
                 },
                 {
-                    "pitch": -1.79,
-                    "yaw": -94.38,
+                    "pitch": -0.12,
+                    "yaw": -100.94,
                     "type": "scene",
                     "text": "Ke Lantai 3",
                     "sceneId": "floor_3",
@@ -239,16 +269,16 @@
         "shapire_mice": {
             "title": "Shapire Mice",
             "type": "equirectangular",
-            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262430/shapire_a04cqp.jpg",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275827/shapire_jkp1bu.jpg",
             "description": "Ruang pertemuan Shapire Mice.",
-            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262430/shapire_a04cqp.jpg",
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275827/shapire_jkp1bu.jpg",
             "hfov": 100,
             "pitch": 0,
             "yaw": 0,
             "hotSpots": [
                 {
-                    "pitch": -7.09,
-                    "yaw": -49.69,
+                    "pitch": -14.66,
+                    "yaw": 120.68,
                     "type": "scene",
                     "text": "Kembali ke Koridor",
                     "sceneId": "koridor",
@@ -259,16 +289,16 @@
         "emerald_mice": {
             "title": "Emerald Mice",
             "type": "equirectangular",
-            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262423/emerald_ny8yhj.jpg",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275805/emerald_vnarua.jpg",
             "description": "Ruang pertemuan Emerald Mice.",
-            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262423/emerald_ny8yhj.jpg",
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275805/emerald_vnarua.jpg",
             "hfov": 100,
             "pitch": 0,
             "yaw": 0,
             "hotSpots": [
                 {
-                    "pitch": 0,
-                    "yaw": 180,
+                    "pitch": -10.02,
+                    "yaw": -114.04,
                     "type": "scene",
                     "text": "Kembali ke Koridor",
                     "sceneId": "koridor",
@@ -279,13 +309,16 @@
         "jadiete_mice": {
             "title": "Jadiete Mice",
             "type": "equirectangular",
-            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262426/jadiete_pcc3rq.jpg",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275815/jadiete_vkhr1k.jpg",
             "description": "Ruang pertemuan Jadiete Mice.",
-            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262426/jadiete_pcc3rq.jpg",
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275815/jadiete_vkhr1k.jpg",
+            "hfov": 100,
+            "pitch": 0,
+            "yaw": 0,
             "hotSpots": [
                 {
-                    "pitch": 0,
-                    "yaw": 180,
+                    "pitch": -0.31,
+                    "yaw": 165.4,
                     "type": "scene",
                     "text": "Kembali ke Koridor",
                     "sceneId": "koridor",
@@ -296,9 +329,12 @@
         "lift": {
             "title": "Lift",
             "type": "equirectangular",
-            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262427/LOBBY_360_oyudxr.jpg",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275821/LOBBY_360_itnefr.jpg",
             "description": "Lift tamu Harper Palembang.",
-            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262427/LOBBY_360_oyudxr.jpg",
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275821/LOBBY_360_itnefr.jpg",
+            "hfov": 100,
+            "pitch": 0,
+            "yaw": 0,
             "hotSpots": [
                 {
                     "pitch": 0,
@@ -321,13 +357,16 @@
         "floor_3": {
             "title": "Lantai 3",
             "type": "equirectangular",
-            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262424/Floor_3_a8szn3.jpg",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275807/Floor_3_hjcb1i.jpg",
             "description": "Area publik di Lantai 3.",
-            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262424/Floor_3_a8szn3.jpg",
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275807/Floor_3_hjcb1i.jpg",
+            "hfov": 100,
+            "pitch": 0,
+            "yaw": 0,
             "hotSpots": [
                 {
-                    "pitch": -2.2,
-                    "yaw": 48.57,
+                    "pitch": -1.66,
+                    "yaw": 46.09,
                     "type": "scene",
                     "text": "Ke Kamar",
                     "sceneId": "room",
@@ -350,33 +389,28 @@
                     "tooltip": "Koridor Ballroom"
                 },
                 {
-                    "pitch": -3.18,
-                    "yaw": 32.09,
+                    "pitch": -1.8,
+                    "yaw": 33.54,
                     "type": "scene",
                     "text": "Ke Area Kolam Renang",
                     "sceneId": "pool_area",
                     "tooltip": "Pool Area"
-                },
-                {
-                    "pitch": -17.54,
-                    "yaw": -75,
-                    "type": "scene",
-                    "text": "Ke Scene Baru",
-                    "sceneId": "exterior",
-                    "tooltip": "Ganti Deskripsi Ini"
                 }
             ]
         },
         "dcentral": {
             "title": "D'Central",
             "type": "equirectangular",
-            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262421/dcentral_kjzokz.jpg",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275802/dcentral_ribo4w.jpg",
             "description": "Restoran D'Central.",
-            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262421/dcentral_kjzokz.jpg",
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275802/dcentral_ribo4w.jpg",
+            "hfov": 100,
+            "pitch": 0,
+            "yaw": 0,
             "hotSpots": [
                 {
-                    "pitch": 0,
-                    "yaw": 180,
+                    "pitch": -1.47,
+                    "yaw": 172.4,
                     "type": "scene",
                     "text": "Kembali ke Lantai 3",
                     "sceneId": "floor_3",
@@ -387,9 +421,12 @@
         "ballroom": {
             "title": "Ballroom",
             "type": "equirectangular",
-            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262421/ballroom_qifjfa.jpg",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275809/grand_ballroom_s4ufee.jpg",
             "description": "Area Ballroom Harper Palembang.",
-            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262421/ballroom_qifjfa.jpg",
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275809/grand_ballroom_s4ufee.jpg",
+            "hfov": 100,
+            "pitch": 0,
+            "yaw": 0,
             "hotSpots": [
                 {
                     "pitch": 0,
@@ -400,16 +437,16 @@
                     "tooltip": "Koridor Ballroom"
                 },
                 {
-                    "pitch": 0,
-                    "yaw": 45,
+                    "pitch": 0.71,
+                    "yaw": 20.21,
                     "type": "scene",
                     "text": "Ke Imperial",
                     "sceneId": "imperial",
                     "tooltip": "Imperial"
                 },
                 {
-                    "pitch": 0,
-                    "yaw": -45,
+                    "pitch": -0.15,
+                    "yaw": 60.52,
                     "type": "scene",
                     "text": "Ke Dynasti",
                     "sceneId": "dynasti",
@@ -420,9 +457,12 @@
         "imperial": {
             "title": "Imperial Ballroom",
             "type": "equirectangular",
-            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262424/Floor_3_a8szn3.jpg",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275807/Floor_3_hjcb1i.jpg",
             "description": "Ruang Ballroom Imperial.",
-            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262424/Floor_3_a8szn3.jpg",
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275807/Floor_3_hjcb1i.jpg",
+            "hfov": 100,
+            "pitch": 0,
+            "yaw": 0,
             "hotSpots": [
                 {
                     "pitch": 0,
@@ -437,9 +477,12 @@
         "dynasti": {
             "title": "Dynasti Ballroom",
             "type": "equirectangular",
-            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262427/LOBBY_360_oyudxr.jpg",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275821/LOBBY_360_itnefr.jpg",
             "description": "Ruang Ballroom Dynasti.",
-            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262427/LOBBY_360_oyudxr.jpg",
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275821/LOBBY_360_itnefr.jpg",
+            "hfov": 100,
+            "pitch": 0,
+            "yaw": 0,
             "hotSpots": [
                 {
                     "pitch": 0,
@@ -454,29 +497,32 @@
         "pool_area": {
             "title": "Pool Area",
             "type": "equirectangular",
-            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262429/POOLAREA_xcppg3.jpg",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275824/POOLAREA_pbtyk8.jpg",
             "description": "Area Kolam Renang dan Spa.",
-            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262429/POOLAREA_xcppg3.jpg",
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275824/POOLAREA_pbtyk8.jpg",
+            "hfov": 100,
+            "pitch": 0,
+            "yaw": 0,
             "hotSpots": [
                 {
-                    "pitch": -4.61,
-                    "yaw": -102,
+                    "pitch": -1.97,
+                    "yaw": -120.27,
                     "type": "scene",
                     "text": "Ke Kolam Renang",
                     "sceneId": "pool",
                     "tooltip": "Pool"
                 },
                 {
-                    "pitch": 0,
-                    "yaw": -45,
+                    "pitch": -1.54,
+                    "yaw": -47.9,
                     "type": "scene",
                     "text": "Ke Spa & Gym",
                     "sceneId": "spa_gym",
                     "tooltip": "Spa & Gym"
                 },
                 {
-                    "pitch": 0,
-                    "yaw": 180,
+                    "pitch": -1.41,
+                    "yaw": 125.61,
                     "type": "scene",
                     "text": "Kembali ke Lantai 3",
                     "sceneId": "floor_3",
@@ -487,43 +533,76 @@
         "pool": {
             "title": "Kolam Renang",
             "type": "equirectangular",
-            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262430/POOL_hdwvyi.jpg",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275824/POOL_q3wkxa.jpg",
             "description": "Kolam renang outdoor yang menyegarkan.",
-            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262430/POOL_hdwvyi.jpg",
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275824/POOL_q3wkxa.jpg",
+            "hfov": 100,
+            "pitch": 0,
+            "yaw": 0,
             "hotSpots": [
                 {
-                    "pitch": 0,
-                    "yaw": 180,
+                    "pitch": -4.47,
+                    "yaw": 120.19,
                     "type": "scene",
                     "text": "Kembali ke Pool Area",
                     "sceneId": "pool_area",
                     "tooltip": "Pool Area"
+                },
+                {
+                    "pitch": -4.37,
+                    "yaw": 70.88,
+                    "type": "scene",
+                    "text": "Ke Spa & Gym",
+                    "sceneId": "spa_gym",
+                    "tooltip": "Ke Spa & Gym"
                 }
             ]
         },
         "spa_gym": {
             "title": "Spa & Gym",
             "type": "equirectangular",
-            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262430/spa_gym_e6ybq5.jpg",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275830/spa___Gym_acynfi.jpg",
             "description": "Fasilitas relaksasi dan kebugaran.",
-            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262430/spa_gym_e6ybq5.jpg",
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275830/spa___Gym_acynfi.jpg",
+            "hfov": 100,
+            "pitch": 0,
+            "yaw": 0,
             "hotSpots": [
                 {
-                    "pitch": 0,
-                    "yaw": 180,
+                    "pitch": -1.26,
+                    "yaw": 94.83,
                     "type": "scene",
                     "text": "Kembali ke Pool Area",
                     "sceneId": "pool_area",
                     "tooltip": "Pool Area"
+                },
+                {
+                    "pitch": -7.72,
+                    "yaw": -13.28,
+                    "type": "scene",
+                    "text": "Ke SPA",
+                    "sceneId": "SPA",
+                    "tooltip": "Ke SPA"
+                },
+                {
+                    "pitch": -7.4,
+                    "yaw": 14.92,
+                    "type": "scene",
+                    "text": "Ke gym harper",
+                    "sceneId": "gym harper",
+                    "tooltip": "Ke gym harper"
                 }
             ]
         },
         "room": {
             "title": "Area Kamar",
             "type": "equirectangular",
-            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262431/room_bzdsls.jpg",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275826/room_gf9ia1.jpg",
             "description": "Pilih tipe kamar yang anda inginkan.",
-            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262431/room_bzdsls.jpg",
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275826/room_gf9ia1.jpg",
+            "hfov": 100,
+            "pitch": 0,
+            "yaw": 0,
             "hotSpots": [
                 {
                     "pitch": -1.35,
@@ -542,16 +621,16 @@
                     "tooltip": "Deluxe Premier"
                 },
                 {
-                    "pitch": 0.26,
-                    "yaw": 110.42,
+                    "pitch": -0.05,
+                    "yaw": 114.82,
                     "type": "scene",
                     "text": "Executive Suite",
                     "sceneId": "exe_suite",
                     "tooltip": "Executive Suite"
                 },
                 {
-                    "pitch": 1.03,
-                    "yaw": 113.77,
+                    "pitch": 0.55,
+                    "yaw": 111.26,
                     "type": "scene",
                     "text": "Junior Suite",
                     "sceneId": "junior_suite",
@@ -570,9 +649,12 @@
         "deluxe_room": {
             "title": "Deluxe Room",
             "type": "equirectangular",
-            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262421/dlx_ji2fsb.jpg",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275804/dlx_b3vn3n.jpg",
             "description": "Kamar Deluxe yang nyaman.",
-            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262421/dlx_ji2fsb.jpg",
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275804/dlx_b3vn3n.jpg",
+            "hfov": 100,
+            "pitch": 0,
+            "yaw": 0,
             "hotSpots": [
                 {
                     "pitch": 0,
@@ -587,9 +669,12 @@
         "deluxe_premier": {
             "title": "Deluxe Premier",
             "type": "equirectangular",
-            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262421/dlx_ji2fsb.jpg",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275803/Deluxe_Premier_ltd9as.png",
             "description": "Kamar Deluxe Premier yang lebih luas.",
-            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262421/dlx_ji2fsb.jpg",
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275803/Deluxe_Premier_ltd9as.png",
+            "hfov": 100,
+            "pitch": 0,
+            "yaw": 0,
             "hotSpots": [
                 {
                     "pitch": 0,
@@ -604,9 +689,12 @@
         "exe_suite": {
             "title": "Executive Suite",
             "type": "equirectangular",
-            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262423/exe.suite_z4vahw.jpg",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275805/exe.suite_fooilh.jpg",
             "description": "Kamar Executive Suite yang mewah.",
-            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262423/exe.suite_z4vahw.jpg",
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275805/exe.suite_fooilh.jpg",
+            "hfov": 100,
+            "pitch": 0,
+            "yaw": 0,
             "hotSpots": [
                 {
                     "pitch": 0,
@@ -621,13 +709,16 @@
         "junior_suite": {
             "title": "Junior Suite",
             "type": "equirectangular",
-            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262425/JUNIOR_SUITE_quh4li.png",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275816/JUNIOR_SUITE_b6kkfj.png",
             "description": "Junior Suite dengan fasilitas premium.",
-            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262425/JUNIOR_SUITE_quh4li.png",
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275816/JUNIOR_SUITE_b6kkfj.png",
+            "hfov": 100,
+            "pitch": 0,
+            "yaw": 0,
             "hotSpots": [
                 {
-                    "pitch": -3.09,
-                    "yaw": -157.82,
+                    "pitch": 0,
+                    "yaw": 180,
                     "type": "scene",
                     "text": "Kembali ke Area Kamar",
                     "sceneId": "room",
@@ -638,13 +729,16 @@
         "koridor_ballroom": {
             "title": "Koridor Ballroom",
             "type": "equirectangular",
-            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262427/koridorballroom_hxsm7y.jpg",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275818/koridorballroom_kxx5is.jpg",
             "description": "Koridor utama menuju area Ballroom Harper Palembang.",
-            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782262427/koridorballroom_hxsm7y.jpg",
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275818/koridorballroom_kxx5is.jpg",
+            "hfov": 100,
+            "pitch": 0,
+            "yaw": 0,
             "hotSpots": [
                 {
-                    "pitch": -2.07,
-                    "yaw": 32.11,
+                    "pitch": -1.83,
+                    "yaw": 32.42,
                     "type": "scene",
                     "text": "Ke Ballroom",
                     "sceneId": "ballroom",
@@ -657,6 +751,62 @@
                     "text": "Kembali ke Lantai 3",
                     "sceneId": "floor_3",
                     "tooltip": "Lantai 3"
+                }
+            ]
+        },
+        "SPA": {
+            "title": "SPA",
+            "type": "equirectangular",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275829/SPA_HARPER_q8zxky.jpg",
+            "description": "",
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275829/SPA_HARPER_q8zxky.jpg",
+            "hfov": 100,
+            "pitch": 0,
+            "yaw": 0,
+            "hotSpots": [
+                {
+                    "pitch": -1.25,
+                    "yaw": 60.74,
+                    "type": "scene",
+                    "text": "Ke Spa & Gym",
+                    "sceneId": "spa_gym",
+                    "tooltip": "Ke Spa & Gym"
+                }
+            ]
+        },
+        "gym harper": {
+            "title": "gym harper",
+            "type": "equirectangular",
+            "panorama": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275811/gym_harper_boutwh.jpg",
+            "description": "",
+            "previewImg": "https://res.cloudinary.com/dn9ulmxic/image/upload/v1782275811/gym_harper_boutwh.jpg",
+            "hfov": 100,
+            "pitch": 0,
+            "yaw": 0,
+            "hotSpots": [
+                {
+                    "pitch": -0.86,
+                    "yaw": 135.7,
+                    "type": "scene",
+                    "text": "Ke SPA",
+                    "sceneId": "SPA",
+                    "tooltip": "Ke SPA"
+                },
+                {
+                    "pitch": 0.01,
+                    "yaw": 66.49,
+                    "type": "scene",
+                    "text": "Ke Spa & Gym",
+                    "sceneId": "spa_gym",
+                    "tooltip": "Ke Spa & Gym"
+                },
+                {
+                    "pitch": 0.06,
+                    "yaw": 24.8,
+                    "type": "scene",
+                    "text": "Ke Pool Area",
+                    "sceneId": "pool_area",
+                    "tooltip": "Ke Pool Area"
                 }
             ]
         }

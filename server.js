@@ -1,10 +1,3 @@
-// Try to load dotenv if available (for development)
-try {
-  require('dotenv').config();
-} catch (e) {
-  // dotenv not available (production) - just continue
-}
-
 const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs-extra');
@@ -12,19 +5,63 @@ const path = require('path');
 const cors = require('cors');
 const multer = require('multer');
 const cloudinary = require('cloudinary').v2;
+require('dotenv').config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3007;
 
-// Configure Cloudinary
+// Konfigurasi Cloudinary
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'dn9ulmxic',
   api_key: process.env.CLOUDINARY_API_KEY || '766525765543389',
   api_secret: process.env.CLOUDINARY_API_SECRET || 'eeBelnE50teVvGZ6cFidWBoIfpY'
 });
 
-// Configure multer for memory storage (since we'll upload directly to Cloudinary)
+// Konfigurasi Multer untuk menyimpan file sementara di memory sebelum diupload ke Cloudinary
 const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+
+// Ensure upload directories exist
+fs.ensureDirSync(path.join(__dirname, 'foto'));
+fs.ensureDirSync(path.join(__dirname, 'music'));
+
+// Path to users file
+const USERS_FILE = path.join(__dirname, 'users.json');
+
+// Helper to read users
+async function readUsers() {
+    try {
+        if (await fs.pathExists(USERS_FILE)) {
+            return await fs.readJson(USERS_FILE);
+        }
+        return { users: [] };
+    } catch (e) {
+        console.error("Error reading users:", e);
+        return { users: [] };
+    }
+}
+
+// Helper to write users
+async function writeUsers(usersData) {
+    await fs.writeJson(USERS_FILE, usersData, { spaces: 4 });
+}
+
+// Configure storage for uploads
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        if (file.fieldname === 'music') {
+            cb(null, 'music/')
+        } else {
+            cb(null, 'foto/')
+        }
+    },
+    filename: function (req, file, cb) {
+        // Sanitize filename: remove spaces and special characters
+        const sanitizedName = file.originalname.replace(/[^a-zA-Z0-9.]/g, '_');
+        cb(null, sanitizedName)
+    }
+});
+
 const upload = multer({ storage: storage });
 
 // Error Handling Global agar server tidak crash
@@ -50,29 +87,177 @@ app.get('/api/status', (req, res) => {
     res.json({ success: true, status: 'online' });
 });
 
-// New /upload endpoint
+// API: Login
+app.post('/api/login', async (req, res) => {
+    try {
+        const { username, password } = req.body;
+        if (!username || !password) {
+            return res.status(400).json({ success: false, message: 'Username dan password diperlukan' });
+        }
+
+        const usersData = await readUsers();
+        const user = usersData.users.find(u => u.username === username && u.password === password);
+
+        if (user) {
+            res.json({ 
+                success: true, 
+                user: { id: user.id, username: user.username, role: user.role }
+            });
+        } else {
+            res.status(401).json({ success: false, message: 'Username atau password salah' });
+        }
+    } catch (error) {
+        console.error('Login error:', error);
+        res.status(500).json({ success: false, message: 'Gagal login' });
+    }
+});
+
+// API: Get all users (admin only)
+app.get('/api/users', async (req, res) => {
+    try {
+        const { role } = req.headers;
+        if (role !== 'admin') {
+            return res.status(403).json({ success: false, message: 'Akses ditolak' });
+        }
+
+        const usersData = await readUsers();
+        res.json({ success: true, users: usersData.users.map(u => ({ id: u.id, username: u.username, role: u.role })) });
+    } catch (error) {
+        console.error('Get users error:', error);
+        res.status(500).json({ success: false, message: 'Gagal mendapatkan daftar pengguna' });
+    }
+});
+
+// API: Create user (admin only)
+app.post('/api/users', async (req, res) => {
+    try {
+        const { role: requesterRole } = req.headers;
+        if (requesterRole !== 'admin') {
+            return res.status(403).json({ success: false, message: 'Akses ditolak' });
+        }
+
+        const { username, password, role } = req.body;
+        if (!username || !password || !role) {
+            return res.status(400).json({ success: false, message: 'Semua kolom harus diisi' });
+        }
+
+        const usersData = await readUsers();
+        
+        // Check if username exists
+        if (usersData.users.find(u => u.username === username)) {
+            return res.status(400).json({ success: false, message: 'Username sudah digunakan' });
+        }
+
+        const newUser = {
+            id: Date.now().toString(),
+            username,
+            password,
+            role,
+            createdAt: new Date().toISOString()
+        };
+
+        usersData.users.push(newUser);
+        await writeUsers(usersData);
+
+        res.json({ success: true, message: 'Pengguna berhasil dibuat', user: { id: newUser.id, username: newUser.username, role: newUser.role } });
+    } catch (error) {
+        console.error('Create user error:', error);
+        res.status(500).json({ success: false, message: 'Gagal membuat pengguna' });
+    }
+});
+
+// API: Delete user (admin only)
+app.delete('/api/users/:id', async (req, res) => {
+    try {
+        const { role: requesterRole } = req.headers;
+        if (requesterRole !== 'admin') {
+            return res.status(403).json({ success: false, message: 'Akses ditolak' });
+        }
+
+        const { id } = req.params;
+        const usersData = await readUsers();
+        
+        // Don't allow deleting the last admin
+        const admins = usersData.users.filter(u => u.role === 'admin');
+        const userToDelete = usersData.users.find(u => u.id === id);
+        
+        if (userToDelete && userToDelete.role === 'admin' && admins.length <= 1) {
+            return res.status(400).json({ success: false, message: 'Tidak dapat menghapus admin terakhir' });
+        }
+
+        const filteredUsers = usersData.users.filter(u => u.id !== id);
+        if (filteredUsers.length === usersData.users.length) {
+            return res.status(404).json({ success: false, message: 'Pengguna tidak ditemukan' });
+        }
+
+        usersData.users = filteredUsers;
+        await writeUsers(usersData);
+
+        res.json({ success: true, message: 'Pengguna berhasil dihapus' });
+    } catch (error) {
+        console.error('Delete user error:', error);
+        res.status(500).json({ success: false, message: 'Gagal menghapus pengguna' });
+    }
+});
+
+// API to partially update a scene (PATCH)
+app.patch('/api/scenes/:sceneId', async (req, res) => {
+    try {
+        const { sceneId } = req.params;
+        const updates = req.body;
+
+        const configPath = path.join(__dirname, 'config.json');
+        if (!await fs.pathExists(configPath)) {
+            return res.status(404).json({ success: false, message: 'Config not found' });
+        }
+
+        const configData = await fs.readJson(configPath);
+        if (!configData.scenes || !configData.scenes[sceneId]) {
+            return res.status(404).json({ success: false, message: 'Scene not found' });
+        }
+
+        // Apply the updates to the scene
+        configData.scenes[sceneId] = { ...configData.scenes[sceneId], ...updates };
+
+        // Save the updated config
+        await fs.writeJson(configPath, configData, { spaces: 4 });
+
+        res.json({ success: true, message: 'Scene updated successfully', scene: configData.scenes[sceneId] });
+    } catch (error) {
+        console.error('Patch scene error:', error);
+        res.status(500).json({ success: false, message: 'Gagal mengupdate scene' });
+    }
+});
+
+// Helper function to upload buffer to Cloudinary
+const uploadToCloudinary = (buffer, options = {}) => {
+  return new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      options,
+      (error, result) => {
+        if (error) reject(error);
+        else resolve(result);
+      }
+    );
+    uploadStream.end(buffer);
+  });
+};
+
+// Endpoint POST /upload (sesuai permintaan)
 app.post('/upload', upload.single('file'), async (req, res) => {
     try {
         if (!req.file) {
             return res.status(400).json({ success: false, message: 'No file uploaded' });
         }
 
-        // Upload to Cloudinary using buffer
-        const result = await new Promise((resolve, reject) => {
-            const stream = cloudinary.uploader.upload_stream(
-                { resource_type: 'auto' },
-                (error, result) => {
-                    if (error) reject(error);
-                    else resolve(result);
-                }
-            );
-            stream.end(req.file.buffer);
+        const result = await uploadToCloudinary(req.file.buffer, {
+            folder: 'harper-360'
         });
 
         res.json({
             success: true,
-            message: 'File uploaded successfully',
             secure_url: result.secure_url,
+            url: result.url,
             public_id: result.public_id
         });
     } catch (error) {
@@ -85,51 +270,50 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     }
 });
 
-// API to upload photo (keeping original endpoint for compatibility)
+// API to upload photo (diupdate untuk menggunakan Cloudinary)
 app.post('/api/upload', upload.single('photo'), async (req, res) => {
     try {
         if (!req.file) {
             return res.status(400).json({ success: false, message: 'No file uploaded' });
         }
 
-        // Upload to Cloudinary
-        const result = await new Promise((resolve, reject) => {
-            const stream = cloudinary.uploader.upload_stream(
-                { resource_type: 'auto' },
-                (error, result) => {
-                    if (error) reject(error);
-                    else resolve(result);
-                }
-            );
-            stream.end(req.file.buffer);
+        const result = await uploadToCloudinary(req.file.buffer, {
+            folder: 'harper-360/photos'
         });
 
-        res.json({
-            success: true,
-            message: 'File uploaded successfully',
+        res.json({ 
+            success: true, 
+            message: 'File uploaded successfully', 
             filePath: result.secure_url,
-            secure_url: result.secure_url
+            url: result.secure_url
         });
     } catch (error) {
         console.error('Upload Error:', error);
-        res.status(500).json({
-            success: false,
+        res.status(500).json({ 
+            success: false, 
             message: 'Gagal mengunggah foto. Pastikan ukuran file tidak terlalu besar.',
-            error: error.message
+            error: error.message 
         });
     }
 });
 
-// API to upload music
-app.post('/api/upload-music', upload.single('music'), (req, res) => {
+// API to upload music (diupdate untuk menggunakan Cloudinary)
+app.post('/api/upload-music', upload.single('music'), async (req, res) => {
     try {
         if (!req.file) {
             return res.status(400).json({ success: false, message: 'File musik belum dipilih' });
         }
+
+        const result = await uploadToCloudinary(req.file.buffer, {
+            folder: 'harper-360/music',
+            resource_type: 'video'
+        });
+
         res.json({ 
             success: true, 
             message: 'Musik berhasil diunggah', 
-            filePath: 'music/' + req.file.filename 
+            filePath: result.secure_url,
+            url: result.secure_url
         });
     } catch (error) {
         console.error('Music Upload Error:', error);
@@ -184,9 +368,57 @@ app.post('/api/save-config', async (req, res) => {
             return res.status(403).json({ success: false, message: 'Akses ditolak: Token autentikasi salah' });
         }
 
-        const configData = req.body;
+        let configData = req.body;
         if (!configData || typeof configData !== 'object') {
             return res.status(400).json({ success: false, message: 'Data konfigurasi tidak valid' });
+        }
+
+        // Ensure config has all top-level sections (backward compatibility)
+        if (!configData.scenes) configData.scenes = {};
+        if (!configData.default) configData.default = { firstScene: "", type: "equirectangular" };
+        if (!configData.settings) configData.settings = { logo: "", music: { url: "", autoPlay: true }, footer: {} };
+
+        // Process each scene to ensure it has all required fields (backward compatibility)
+        // Read existing config to compare and find new scenes
+        const configPath = path.join(__dirname, 'config.json');
+        let existingConfig = { scenes: {}, default: configData.default, settings: configData.settings };
+        
+        if (await fs.pathExists(configPath)) {
+            try {
+                existingConfig = await fs.readJson(configPath);
+            } catch (e) {
+                console.warn('Could not read existing config, proceeding with empty:', e);
+            }
+        }
+
+        let newSceneId = null;
+        
+        // Validate and normalize each scene
+        for (const [sceneId, scene] of Object.entries(configData.scenes)) {
+            // Check if this is a new scene
+            if (!existingConfig.scenes || !existingConfig.scenes[sceneId]) {
+                newSceneId = sceneId;
+                // Validate required fields for new scenes
+                if (!scene.title || !scene.title.trim()) {
+                    return res.status(400).json({ success: false, message: `Scene "${sceneId}": Judul scene tidak boleh kosong!` });
+                }
+                if (!scene.panorama || !scene.panorama.trim()) {
+                    return res.status(400).json({ success: false, message: `Scene "${sceneId}": Foto panorama tidak boleh kosong!` });
+                }
+            }
+
+            // Ensure all scene fields have default values (backward compatibility)
+            configData.scenes[sceneId] = {
+                title: scene.title || "Untitled Scene",
+                type: scene.type || "equirectangular",
+                panorama: scene.panorama || "",
+                description: scene.description || "",
+                previewImg: scene.previewImg || scene.panorama || "",
+                hfov: typeof scene.hfov === 'number' ? scene.hfov : 100,
+                pitch: typeof scene.pitch === 'number' ? scene.pitch : 0,
+                yaw: typeof scene.yaw === 'number' ? scene.yaw : 0,
+                hotSpots: Array.isArray(scene.hotSpots) ? scene.hotSpots : []
+            };
         }
 
         // RBAC on Server Side: Only 'admin' can change global settings
@@ -194,8 +426,6 @@ app.post('/api/save-config', async (req, res) => {
         // However, for simplicity in this project, we'll trust the frontend filtering
         // but keep the role logging.
         console.log(`[${new Date().toLocaleString()}] Save Config Request from Role: ${role}`);
-
-        const configPath = path.join(__dirname, 'config.json');
         
         // Robust Save: Write to temp file then rename (atomic)
         const tempPath = configPath + '.tmp';
@@ -208,7 +438,13 @@ app.post('/api/save-config', async (req, res) => {
         
         await fs.move(tempPath, configPath, { overwrite: true });
         
-        res.json({ success: true, message: 'Konfigurasi berhasil disimpan secara permanen' });
+        // Prepare response
+        const response = { success: true, message: 'Konfigurasi berhasil disimpan secara permanen' };
+        if (newSceneId) {
+            response.newSceneId = newSceneId;
+        }
+        
+        res.json(response);
     } catch (error) {
         console.error('Save Config Error:', error);
         res.status(500).json({ 
