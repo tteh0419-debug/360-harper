@@ -836,12 +836,15 @@
         if(panoViewer) {
             panoViewer.loadScene(sceneId);
         } else {
-            // Prepare scenes with absolute paths to avoid loading issues
+            // Helper to check if URL is absolute
+            const isAbsoluteUrl = (url) => url.startsWith('http://') || url.startsWith('https://') || url.startsWith('//');
+            
+            // Prepare scenes with correct paths
             const processedScenes = {};
             for (const id in tourConfig.scenes) {
                 processedScenes[id] = {
                     ...tourConfig.scenes[id],
-                    panorama: tourConfig.scenes[id].panorama.startsWith('http') ? 
+                    panorama: isAbsoluteUrl(tourConfig.scenes[id].panorama) ? 
                               tourConfig.scenes[id].panorama : 
                               '/' + tourConfig.scenes[id].panorama
                 };
@@ -905,18 +908,21 @@
         });
     }
 
-    function showInfoPanel(title, infoText, imgUrl) {
-        document.getElementById('infoTitle').innerText = title;
-        document.getElementById('infoDesc').innerText = infoText;
-        document.getElementById('infoImage').src = imgUrl || "foto/LOBBY.png";
-        document.getElementById('infoPanel').classList.add('open');
-    }
+    // Helper to check if URL is absolute
+        const isAbsoluteUrl = (url) => url.startsWith('http://') || url.startsWith('https://') || url.startsWith('//');
 
-    function updateInfoPreview(title, desc, imgUrl) {
-        document.getElementById('infoTitle').innerText = title;
-        document.getElementById('infoDesc').innerText = desc;
-        if(imgUrl) document.getElementById('infoImage').src = imgUrl;
-    }
+        function showInfoPanel(title, infoText, imgUrl) {
+            document.getElementById('infoTitle').innerText = title;
+            document.getElementById('infoDesc').innerText = infoText;
+            document.getElementById('infoImage').src = (imgUrl && isAbsoluteUrl(imgUrl)) ? imgUrl : (imgUrl || "foto/LOBBY.png");
+            document.getElementById('infoPanel').classList.add('open');
+        }
+
+        function updateInfoPreview(title, desc, imgUrl) {
+            document.getElementById('infoTitle').innerText = title;
+            document.getElementById('infoDesc').innerText = desc;
+            if(imgUrl) document.getElementById('infoImage').src = isAbsoluteUrl(imgUrl) ? imgUrl : imgUrl;
+        }
 
     // Build Sidebar List
     function buildSidebar() {
