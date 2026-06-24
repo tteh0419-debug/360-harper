@@ -1201,7 +1201,7 @@
                     
                     // Update preview to use the server's file (not the object URL)
                     const previewImg = document.getElementById('modalPanoramaPreview').querySelector('img');
-                    previewImg.src = '../' + normalizedPath;
+                    previewImg.src = isAbsoluteUrl(normalizedPath) ? normalizedPath : '../' + normalizedPath;
                     
                     status.style.color = "green";
                     status.innerText = "Berhasil diunggah: " + normalizedPath;
@@ -1512,6 +1512,10 @@
             }
         }
 
+        function isAbsoluteUrl(url) {
+            return url.startsWith('http://') || url.startsWith('https://') || url.startsWith('//');
+        }
+
         function renderScenes() {
             const grid = document.getElementById('sceneGrid');
             grid.innerHTML = '';
@@ -1520,7 +1524,7 @@
                 const card = document.createElement('div');
                 card.className = 'scene-card';
                 // Encode URL to handle spaces in filenames
-                const thumbUrl = encodeURI('../' + scene.panorama);
+                const thumbUrl = isAbsoluteUrl(scene.panorama) ? scene.panorama : encodeURI('../' + scene.panorama);
                 card.innerHTML = `
                     <div class="scene-thumb" style="background-image: url('${thumbUrl}')"></div>
                     <div class="scene-info">
@@ -1566,7 +1570,7 @@
                 
                 if (previewDiv && scene.panorama) {
                     previewDiv.style.display = 'block';
-                    previewDiv.querySelector('img').src = '../' + scene.panorama;
+                    previewDiv.querySelector('img').src = isAbsoluteUrl(scene.panorama) ? scene.panorama : '../' + scene.panorama;
                 }
             } else {
                 document.getElementById('editSceneId').value = '';
@@ -1732,7 +1736,7 @@
 
             panoEditorViewer = pannellum.viewer('editorViewer', {
                 "type": "equirectangular",
-                "panorama": "/" + scene.panorama,
+                "panorama": isAbsoluteUrl(scene.panorama) ? scene.panorama : "/" + scene.panorama,
                 "autoLoad": true,
                 "hotSpots": formattedHotspots,
                 "hotSpotDebug": false,
