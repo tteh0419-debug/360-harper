@@ -45,7 +45,7 @@ async function pathExists(filePath) {
 }
 
 const app = express();
-const PORT = process.env.PORT || 3011;
+const PORT = process.env.PORT || 33333;
 
 // Inisialisasi Firebase Admin
 const firebaseConfig = {
@@ -94,10 +94,13 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 // Only ensure upload directories exist if we're not using Firebase (local development only)
+// (Commented out to avoid top‑level async issues)
+/*
 if (!useFirebase || !db) {
-  ensureDir(path.join(__dirname, 'foto'));
-  ensureDir(path.join(__dirname, 'music'));
+  ensureDir(path.join(__dirname, 'foto')).catch(e => console.log('Could not create foto dir:', e));
+  ensureDir(path.join(__dirname, 'music')).catch(e => console.log('Could not create music dir:', e));
 }
+*/
 
 // Path to users file (fallback)
 const USERS_FILE = path.join(__dirname, 'users.json');
