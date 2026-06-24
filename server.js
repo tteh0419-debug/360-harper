@@ -1,14 +1,86 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const fs = require('fs-extra');
+const fs = require('fs').promises;
 const path = require('path');
 const cors = require('cors');
 const multer = require('multer');
 const cloudinary = require('cloudinary').v2;
+let admin = null;
+try {
+  admin = require('firebase-admin');
+} catch (e) {
+  console.log("⚠️ firebase-admin tidak terinstall, menggunakan file JSON saja");
+}
 require('dotenv').config();
 
+// Helper untuk memastikan direktori ada
+async function ensureDir(dirPath) {
+  try {
+    await fs.access(dirPath);
+  } catch {
+    await fs.mkdir(dirPath, { recursive: true });
+  }
+}
+
+// Helper untuk membaca file JSON
+async function readJson(filePath) {
+  const data = await fs.readFile(filePath, 'utf8');
+  return JSON.parse(data);
+}
+
+// Helper untuk menulis file JSON
+async function writeJson(filePath, data, options = {}) {
+  const spaces = options.spaces || 2;
+  await fs.writeFile(filePath, JSON.stringify(data, null, spaces), 'utf8');
+}
+
+// Helper untuk memeriksa apakah file ada
+async function pathExists(filePath) {
+  try {
+    await fs.access(filePath);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 const app = express();
-const PORT = process.env.PORT || 3007;
+const PORT = process.env.PORT || 3008;
+
+// Inisialisasi Firebase Admin
+const firebaseConfig = {
+  type: process.env.FIREBASE_TYPE,
+  project_id: process.env.FIREBASE_PROJECT_ID,
+  private_key_id: process.env.FIREBASE_PRIVATE_KEY_ID,
+  private_key: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+  client_email: process.env.FIREBASE_CLIENT_EMAIL,
+  client_id: process.env.FIREBASE_CLIENT_ID,
+  auth_uri: process.env.FIREBASE_AUTH_URI,
+  token_uri: process.env.FIREBASE_TOKEN_URI,
+  auth_provider_x509_cert_url: process.env.FIREBASE_AUTH_PROVIDER_X509_CERT_URL,
+  client_x509_cert_url: process.env.FIREBASE_CLIENT_X509_CERT_URL
+};
+
+let db = null;
+let useFirebase = false;
+
+try {
+  if (admin && firebaseConfig.project_id && firebaseConfig.private_key) {
+    admin.initializeApp({
+      credential: admin.credential.cert(firebaseConfig)
+    });
+    db = admin.firestore();
+    useFirebase = true;
+    console.log("🔥 Firebase berhasil diinisialisasi");
+  } else if (!admin) {
+    console.log("⚠️ firebase-admin tidak tersedia, menggunakan file JSON sebagai fallback");
+  } else {
+    console.log("⚠️ Firebase tidak dikonfigurasi, menggunakan file JSON sebagai fallback");
+  }
+} catch (error) {
+  console.error("❌ Gagal inisialisasi Firebase:", error);
+  console.log("⚠️ Menggunakan file JSON sebagai fallback");
+}
 
 // Konfigurasi Cloudinary
 cloudinary.config({
@@ -18,35 +90,6 @@ cloudinary.config({
 });
 
 // Konfigurasi Multer untuk menyimpan file sementara di memory sebelum diupload ke Cloudinary
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
-
-// Ensure upload directories exist
-fs.ensureDirSync(path.join(__dirname, 'foto'));
-fs.ensureDirSync(path.join(__dirname, 'music'));
-
-// Path to users file
-const USERS_FILE = path.join(__dirname, 'users.json');
-
-// Helper to read users
-async function readUsers() {
-    try {
-        if (await fs.pathExists(USERS_FILE)) {
-            return await fs.readJson(USERS_FILE);
-        }
-        return { users: [] };
-    } catch (e) {
-        console.error("Error reading users:", e);
-        return { users: [] };
-    }
-}
-
-// Helper to write users
-async function writeUsers(usersData) {
-    await fs.writeJson(USERS_FILE, usersData, { spaces: 4 });
-}
-
-// Configure storage for uploads
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         if (file.fieldname === 'music') {
@@ -61,8 +104,99 @@ const storage = multer.diskStorage({
         cb(null, sanitizedName)
     }
 });
-
 const upload = multer({ storage: storage });
+
+// Ensure upload directories exist
+ensureDir(path.join(__dirname, 'foto'));
+ensureDir(path.join(__dirname, 'music'));
+
+// Path to users file (fallback)
+const USERS_FILE = path.join(__dirname, 'users.json');
+const CONFIG_FILE = path.join(__dirname, 'config.json');
+
+// Helper to read users
+async function readUsers() {
+    try {
+        if (useFirebase && db) {
+            const snapshot = await db.collection('users').get();
+            const users = [];
+            snapshot.forEach(doc => {
+                users.push(doc.data());
+            });
+            return { users };
+        } else {
+            if (await pathExists(USERS_FILE)) {
+                return await readJson(USERS_FILE);
+            }
+            return { users: [] };
+        }
+    } catch (e) {
+        console.error("Error reading users:", e);
+        return { users: [] };
+    }
+}
+
+// Helper to write users
+async function writeUsers(usersData) {
+    try {
+        if (useFirebase && db) {
+            // Hapus semua dokumen lama
+            const snapshot = await db.collection('users').get();
+            const batch = db.batch();
+            snapshot.docs.forEach(doc => {
+                batch.delete(doc.ref);
+            });
+            
+            // Tambahkan semua pengguna baru
+            usersData.users.forEach(user => {
+                const docRef = db.collection('users').doc(user.id);
+                batch.set(docRef, user);
+            });
+            
+            await batch.commit();
+        } else {
+            await writeJson(USERS_FILE, usersData, { spaces: 4 });
+        }
+    } catch (e) {
+        console.error("Error writing users:", e);
+        throw e;
+    }
+}
+
+// Helper to read config
+async function readConfig() {
+    try {
+        if (useFirebase && db) {
+            const doc = await db.collection('config').doc('main').get();
+            if (doc.exists) {
+                return doc.data();
+            }
+            return null;
+        } else {
+            if (await pathExists(CONFIG_FILE)) {
+                return await readJson(CONFIG_FILE);
+            }
+            return null;
+        }
+    } catch (e) {
+        console.error("Error reading config:", e);
+        return null;
+    }
+}
+
+// Helper to write config
+async function writeConfig(configData) {
+    try {
+        if (useFirebase && db) {
+            await db.collection('config').doc('main').set(configData);
+        } else {
+            await writeJson(CONFIG_FILE, configData, { spaces: 4 });
+        }
+    } catch (e) {
+        console.error("Error writing config:", e);
+        throw e;
+    }
+}
 
 // Error Handling Global agar server tidak crash
 process.on('uncaughtException', (err) => {
@@ -84,7 +218,40 @@ app.use(express.static(__dirname));
 
 // API to check server status
 app.get('/api/status', (req, res) => {
-    res.json({ success: true, status: 'online' });
+  res.json({ success: true, status: 'online', firebase: useFirebase });
+});
+
+// API to get config (legacy, untuk backward compatibility)
+app.get('/api/config', async (req, res) => {
+  try {
+    const configData = await readConfig();
+    if (!configData) {
+      return res.status(404).json({ success: false, message: 'Config not found' });
+    }
+    res.json(configData);
+  } catch (error) {
+    console.error('Get config error:', error);
+    res.status(500).json({ success: false, message: 'Gagal mendapatkan config' });
+  }
+});
+
+// API to get scenes (from Firestore or JSON)
+app.get('/api/scenes', async (req, res) => {
+  try {
+    const configData = await readConfig();
+    if (!configData) {
+      return res.status(404).json({ success: false, message: 'Config not found' });
+    }
+    res.json({ 
+      success: true, 
+      scenes: configData.scenes || {},
+      default: configData.default || {},
+      settings: configData.settings || {}
+    });
+  } catch (error) {
+    console.error('Get scenes error:', error);
+    res.status(500).json({ success: false, message: 'Gagal mendapatkan scenes' });
+  }
 });
 
 // API: Login
@@ -206,12 +373,10 @@ app.patch('/api/scenes/:sceneId', async (req, res) => {
         const { sceneId } = req.params;
         const updates = req.body;
 
-        const configPath = path.join(__dirname, 'config.json');
-        if (!await fs.pathExists(configPath)) {
+        const configData = await readConfig();
+        if (!configData) {
             return res.status(404).json({ success: false, message: 'Config not found' });
         }
-
-        const configData = await fs.readJson(configPath);
         if (!configData.scenes || !configData.scenes[sceneId]) {
             return res.status(404).json({ success: false, message: 'Scene not found' });
         }
@@ -220,7 +385,7 @@ app.patch('/api/scenes/:sceneId', async (req, res) => {
         configData.scenes[sceneId] = { ...configData.scenes[sceneId], ...updates };
 
         // Save the updated config
-        await fs.writeJson(configPath, configData, { spaces: 4 });
+        await writeConfig(configData);
 
         res.json({ success: true, message: 'Scene updated successfully', scene: configData.scenes[sceneId] });
     } catch (error) {
@@ -342,8 +507,9 @@ app.post('/api/delete-file', async (req, res) => {
         }
 
         const fullPath = path.join(__dirname, normalizedPath);
-        if (await fs.pathExists(fullPath)) {
-            await fs.remove(fullPath);
+        if (await pathExists(fullPath)) {
+            const fsSync = require('fs');
+            fsSync.unlinkSync(fullPath);
             res.json({ success: true, message: 'File berhasil dihapus dari server' });
         } else {
             res.status(404).json({ success: false, message: 'File tidak ditemukan di server' });
@@ -380,15 +546,11 @@ app.post('/api/save-config', async (req, res) => {
 
         // Process each scene to ensure it has all required fields (backward compatibility)
         // Read existing config to compare and find new scenes
-        const configPath = path.join(__dirname, 'config.json');
         let existingConfig = { scenes: {}, default: configData.default, settings: configData.settings };
         
-        if (await fs.pathExists(configPath)) {
-            try {
-                existingConfig = await fs.readJson(configPath);
-            } catch (e) {
-                console.warn('Could not read existing config, proceeding with empty:', e);
-            }
+        const currentConfig = await readConfig();
+        if (currentConfig) {
+            existingConfig = currentConfig;
         }
 
         let newSceneId = null;
@@ -427,16 +589,8 @@ app.post('/api/save-config', async (req, res) => {
         // but keep the role logging.
         console.log(`[${new Date().toLocaleString()}] Save Config Request from Role: ${role}`);
         
-        // Robust Save: Write to temp file then rename (atomic)
-        const tempPath = configPath + '.tmp';
-        await fs.writeJson(tempPath, configData, { spaces: 4 });
-        
-        // Backup system
-        if (await fs.pathExists(configPath)) {
-            await fs.copy(configPath, configPath + '.bak');
-        }
-        
-        await fs.move(tempPath, configPath, { overwrite: true });
+        // Save the config
+        await writeConfig(configData);
         
         // Prepare response
         const response = { success: true, message: 'Konfigurasi berhasil disimpan secara permanen' };
@@ -449,7 +603,7 @@ app.post('/api/save-config', async (req, res) => {
         console.error('Save Config Error:', error);
         res.status(500).json({ 
             success: false, 
-            message: 'Gagal menyimpan konfigurasi ke file config.json',
+            message: 'Gagal menyimpan konfigurasi',
             error: error.message 
         });
     }

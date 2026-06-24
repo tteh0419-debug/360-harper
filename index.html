@@ -701,8 +701,14 @@
 
     async function initTour() {
         try {
-            const response = await fetch('config.json?v=' + Date.now());
-            tourConfig = await response.json();
+            let response = await fetch('/api/config?v=' + Date.now());
+            if (response.ok) {
+                tourConfig = await response.json();
+            } else {
+                // Fallback ke config.json jika API gagal
+                response = await fetch('config.json?v=' + Date.now());
+                tourConfig = await response.json();
+            }
             
             // Update Logo from config
             const logoOverlay = document.querySelector('.logo-overlay');
