@@ -45,7 +45,7 @@ async function pathExists(filePath) {
 }
 
 const app = express();
-const PORT = process.env.PORT || 55555;
+const PORT = process.env.PORT || 5000;
 
 // Inisialisasi Firebase Admin
 const firebaseConfig = {
@@ -65,21 +65,29 @@ let db = null;
 let useFirebase = false;
 
 try {
-  if (admin && firebaseConfig.project_id && firebaseConfig.private_key) {
-    admin.initializeApp({
-      credential: admin.credential.cert(firebaseConfig)
-    });
-    db = admin.firestore();
-    useFirebase = true;
-    console.log("🔥 Firebase berhasil diinisialisasi");
-  } else if (!admin) {
-    console.log("⚠️ firebase-admin tidak tersedia, menggunakan file JSON sebagai fallback");
-  } else {
-    console.log("⚠️ Firebase tidak dikonfigurasi, menggunakan file JSON sebagai fallback");
-  }
+    if (admin && firebaseConfig.project_id && firebaseConfig.private_key) {
+        admin.initializeApp({
+            credential: admin.credential.cert(firebaseConfig)
+        });
+        db = admin.firestore();
+        useFirebase = true;
+        console.log("🔥 Firebase berhasil diinisialisasi");
+        
+        // One-time migration from old config path to new path
+        const oldDoc = await db.collection('config').doc('main').get();
+        const newDoc = await db.collection('settings').doc('config').get();
+        if (oldDoc.exists && !newDoc.exists) {
+            await db.collection('settings').doc('config').set(oldDoc.data());
+            console.log("🔄 Config migrated from config/main to settings/config");
+        }
+    } else if (!admin) {
+        console.log("⚠️ firebase-admin tidak tersedia, menggunakan file JSON sebagai fallback");
+    } else {
+        console.log("⚠️ Firebase tidak dikonfigurasi, menggunakan file JSON sebagai fallback");
+    }
 } catch (error) {
-  console.error("❌ Gagal inisialisasi Firebase:", error);
-  console.log("⚠️ Menggunakan file JSON sebagai fallback");
+    console.error("❌ Gagal inisialisasi Firebase:", error);
+    console.log("⚠️ Menggunakan file JSON sebagai fallback");
 }
 
 // Konfigurasi Cloudinary
@@ -147,7 +155,8 @@ async function writeUsers(usersData) {
             
             await batch.commit();
         } else {
-            await writeJson(USERS_FILE, usersData, { spaces: 4 });
+            // Skip local file writes to avoid EROFS errors on Vercel
+            console.log("Firebase not configured, skipping local users write.");
         }
     } catch (e) {
         console.error("Error writing users:", e);
@@ -159,7 +168,7 @@ async function writeUsers(usersData) {
 async function readConfig() {
     try {
         if (useFirebase && db) {
-            const doc = await db.collection('config').doc('main').get();
+            const doc = await db.collection('settings').doc('config').get();
             if (doc.exists) {
                 return doc.data();
             }
@@ -180,9 +189,10 @@ async function readConfig() {
 async function writeConfig(configData) {
     try {
         if (useFirebase && db) {
-            await db.collection('config').doc('main').set(configData);
+            await db.collection('settings').doc('config').set(configData);
         } else {
-            await writeJson(CONFIG_FILE, configData, { spaces: 4 });
+            // Skip local file writes to avoid EROFS errors on Vercel
+            console.log("Firebase not configured, skipping local config write.");
         }
     } catch (e) {
         console.error("Error writing config:", e);
@@ -524,11 +534,29 @@ app.post('/api/delete-file', async (req, res) => {
     }
 });
 
+// Helper to recursively sanitize object (remove undefined, replace with null/empty)
+const sanitizeObject = (obj) => {
+    if (obj === null || obj === undefined) {
+        return null;
+    }
+    if (Array.isArray(obj)) {
+        return obj.map(item => sanitizeObject(item));
+    }
+    if (typeof obj === 'object') {
+        const sanitized = {};
+        for (const [key, value] of Object.entries(obj)) {
+            sanitized[key] = sanitizeObject(value);
+        }
+        return sanitized;
+    }
+    return obj;
+};
+
 // API to save config
 app.post('/api/save-config', async (req, res) => {
     try {
         const auth = req.headers['x-cms-auth'];
-        const role = req.headers['x-cms-role']; // Get role from header
+        const role = req.headers['x-cms-role'];
         
         if (auth !== 'Hpalm123') {
             return res.status(403).json({ success: false, message: 'Akses ditolak: Token autentikasi salah' });
@@ -545,7 +573,6 @@ app.post('/api/save-config', async (req, res) => {
         if (!configData.settings) configData.settings = { logo: "", music: { url: "", autoPlay: true }, footer: {} };
 
         // Process each scene to ensure it has all required fields (backward compatibility)
-        // Read existing config to compare and find new scenes
         let existingConfig = { scenes: {}, default: configData.default, settings: configData.settings };
         
         const currentConfig = await readConfig();
@@ -560,7 +587,6 @@ app.post('/api/save-config', async (req, res) => {
             // Check if this is a new scene
             if (!existingConfig.scenes || !existingConfig.scenes[sceneId]) {
                 newSceneId = sceneId;
-                // Validate required fields for new scenes
                 if (!scene.title || !scene.title.trim()) {
                     return res.status(400).json({ success: false, message: `Scene "${sceneId}": Judul scene tidak boleh kosong!` });
                 }
@@ -569,7 +595,6 @@ app.post('/api/save-config', async (req, res) => {
                 }
             }
 
-            // Ensure all scene fields have default values (backward compatibility)
             configData.scenes[sceneId] = {
                 title: scene.title || "Untitled Scene",
                 type: scene.type || "equirectangular",
@@ -583,16 +608,14 @@ app.post('/api/save-config', async (req, res) => {
             };
         }
 
-        // RBAC on Server Side: Only 'admin' can change global settings
-        // If role is client, we should ensure they aren't changing forbidden fields
-        // However, for simplicity in this project, we'll trust the frontend filtering
-        // but keep the role logging.
+        // Sanitize entire config to remove undefined values (Firestore-safe)
+        const sanitizedConfig = sanitizeObject(configData);
+        
         console.log(`[${new Date().toLocaleString()}] Save Config Request from Role: ${role}`);
         
         // Save the config
-        await writeConfig(configData);
+        await writeConfig(sanitizedConfig);
         
-        // Prepare response
         const response = { success: true, message: 'Konfigurasi berhasil disimpan secara permanen' };
         if (newSceneId) {
             response.newSceneId = newSceneId;
@@ -600,12 +623,8 @@ app.post('/api/save-config', async (req, res) => {
         
         res.json(response);
     } catch (error) {
-        console.error('Save Config Error:', error);
-        res.status(500).json({ 
-            success: false, 
-            message: 'Gagal menyimpan konfigurasi',
-            error: error.message 
-        });
+        console.error("ERROR SAAT SAVE CONFIG:", error);
+        res.status(500).json({ success: false, message: error.message });
     }
 });
 
