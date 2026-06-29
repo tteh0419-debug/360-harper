@@ -56,11 +56,11 @@
             background: var(--primary);
         }
         
-        /* Custom Touch Hotspot */
+        /* Custom Arrow Hotspot */
         .custom-arrow-hotspot {
             width: 40px !important;
             height: 40px !important;
-            background-image: url('https://res.cloudinary.com/dn9ulmxic/image/upload/v1782717901/icons8-3d-touch-80_mey71z.png') !important;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23d4af37' stroke='%23fff' stroke-width='1'><path d='M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z'/></svg>") !important;
             background-size: contain !important;
             background-repeat: no-repeat !important;
             background-position: center !important;
@@ -68,21 +68,15 @@
             border: none !important;
             box-shadow: none !important;
             cursor: pointer;
-            animation: hotspotPulse 2s infinite ease-in-out;
-            transition: transform 0.2s ease;
+            transition: transform 0.2s ease-in-out;
         }
         .custom-arrow-hotspot:hover {
             transform: scale(1.2);
+            filter: drop-shadow(0px 0px 8px rgba(212, 175, 55, 0.8));
         }
         /* Override Pannellum's default hotspot bg */
         .custom-arrow-hotspot.pnlm-hotspot {
             background-color: transparent !important;
-        }
-        /* Pulsing animation */
-        @keyframes hotspotPulse { 
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
         }
         
         /* Sidebar */
