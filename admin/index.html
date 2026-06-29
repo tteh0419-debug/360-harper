@@ -2424,10 +2424,28 @@
             const heightInput = document.getElementById('customLogoHeight');
             const widthInput = document.getElementById('customLogoWidth');
             
+            // Debounce function to prevent too many save requests
+            function debounce(func, wait) {
+                let timeout;
+                return function(...args) {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => func.apply(this, args), wait);
+                };
+            }
+            
+            const saveSizeChanges = debounce(async () => {
+                try {
+                    await saveConfigToServer(true);
+                } catch (err) {
+                    console.error('Gagal menyimpan ukuran logo:', err);
+                }
+            }, 500); // Save after 500ms of no changes
+            
             if (heightInput) {
                 heightInput.addEventListener('input', (e) => {
                     config.settings.logoHeight = parseInt(e.target.value) || 60;
                     updateCustomLogoUI();
+                    saveSizeChanges();
                 });
             }
             
@@ -2435,6 +2453,7 @@
                 widthInput.addEventListener('input', (e) => {
                     config.settings.logoWidth = parseInt(e.target.value) || 150;
                     updateCustomLogoUI();
+                    saveSizeChanges();
                 });
             }
         });
