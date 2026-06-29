@@ -136,6 +136,26 @@
             background-color: transparent !important;
         }
 
+        /* Invisible Trigger Zones */
+        .trigger-zone {
+            position: fixed;
+            background: transparent;
+            z-index: 99999; /* Super high z-index */
+            pointer-events: auto;
+        }
+        .trigger-bottom {
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+        }
+        .trigger-right {
+            right: 0;
+            top: 0;
+            height: 100%;
+            width: 60px;
+        }
+
         /* Sidebar */
         .sidebar {
             position: fixed;
@@ -694,6 +714,10 @@
     <div class="ctrl-btn" id="musicBtn" title="Play/Pause Ambience"><i class="fas fa-music"></i></div>
 </div>
 
+<!-- Invisible Trigger Zones -->
+<div id="miniMapTrigger" class="trigger-zone trigger-bottom"></div>
+<div id="controlsPanelTrigger" class="trigger-zone trigger-right"></div>
+
 
 
 <!-- Sidebar -->
@@ -1200,22 +1224,51 @@
         document.getElementById('infoPanel').classList.remove('open');
     });
     
-    // Mobile toggle for auto-hide menus
+    // Invisible Trigger Zones for Menus
     const miniMap = document.getElementById('miniMap');
     const controlsPanel = document.querySelector('.controls-panel');
-    
-    miniMap.addEventListener('click', (e) => {
-        // Toggle only if clicking on the visible part (not the actual menu items)
-        if (!e.target.closest('span') && !e.target.closest('.admin-link')) {
-            miniMap.classList.toggle('mobile-open');
-        }
+    const miniMapTrigger = document.getElementById('miniMapTrigger');
+    const controlsPanelTrigger = document.getElementById('controlsPanelTrigger');
+
+    // Mini Map Trigger (Bottom)
+    miniMapTrigger.addEventListener('mouseenter', () => {
+        miniMap.classList.add('mobile-open');
     });
-    controlsPanel.addEventListener('click', (e) => {
-        // Toggle only if clicking on the panel's container (not the control buttons)
-        if (!e.target.closest('.ctrl-btn')) {
-            controlsPanel.classList.toggle('mobile-open');
-        }
+    miniMapTrigger.addEventListener('mouseleave', () => {
+        miniMap.classList.remove('mobile-open');
     });
+    miniMapTrigger.addEventListener('click', () => {
+        miniMap.classList.toggle('mobile-open');
+    });
+
+    // Also keep mini map hover support for when it's visible
+    miniMap.addEventListener('mouseenter', () => {
+        miniMap.classList.add('mobile-open');
+    });
+    miniMap.addEventListener('mouseleave', () => {
+        miniMap.classList.remove('mobile-open');
+    });
+
+    // Controls Panel Trigger (Right)
+    controlsPanelTrigger.addEventListener('mouseenter', () => {
+        controlsPanel.classList.add('mobile-open');
+    });
+    controlsPanelTrigger.addEventListener('mouseleave', () => {
+        controlsPanel.classList.remove('mobile-open');
+    });
+    controlsPanelTrigger.addEventListener('click', () => {
+        controlsPanel.classList.toggle('mobile-open');
+    });
+
+    // Also keep controls panel hover support for when it's visible
+    controlsPanel.addEventListener('mouseenter', () => {
+        controlsPanel.classList.add('mobile-open');
+    });
+    controlsPanel.addEventListener('mouseleave', () => {
+        controlsPanel.classList.remove('mobile-open');
+    });
+
+    // Keep mini map click for scene navigation
     // Mini map click
     document.querySelectorAll('.mini-map span').forEach(el => {
         el.addEventListener('click', (e) => {
