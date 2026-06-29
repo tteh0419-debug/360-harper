@@ -581,6 +581,27 @@ app.post('/api/save-config', async (req, res) => {
         if (!configData.default) configData.default = { firstScene: "", type: "equirectangular" };
         if (!configData.settings) configData.settings = { logo: "", music: { url: "", autoPlay: true }, footer: {} };
 
+        // ✅ CLEANUP: Remove all hotspots that target deleted scenes!
+        const existingSceneIds = Object.keys(configData.scenes);
+        let removedHotspotsCount = 0;
+        for (const [sceneId, scene] of Object.entries(configData.scenes)) {
+            if (scene.hotSpots && Array.isArray(scene.hotSpots)) {
+                // Keep only hotspots whose target scene still exists
+                scene.hotSpots = scene.hotSpots.filter(hs => {
+                    const targetId = hs.sceneId || hs.targetScene;
+                    if (!targetId || existingSceneIds.includes(targetId)) {
+                        return true;
+                    }
+                    removedHotspotsCount++;
+                    console.log(`🔥 Menghapus hotspot di scene ${sceneId} yang menunjuk ke scene ${targetId} (sudah dihapus)`);
+                    return false;
+                });
+            }
+        }
+        if (removedHotspotsCount > 0) {
+            console.log(`✅ Total ${removedHotspotsCount} hotspot mati dihapus!`);
+        }
+
         // Process each scene to ensure it has all required fields (backward compatibility)
         let existingConfig = { scenes: {}, default: configData.default, settings: configData.settings };
         
