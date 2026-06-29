@@ -826,16 +826,6 @@
                         <img id="customLogoPreview" src="" alt="Custom Logo Preview" style="max-height: 60px; margin-left: 10px;">
                         <button class="action-btn delete-btn" onclick="deleteCustomLogo()" style="margin-left: auto;"><i class="fas fa-trash"></i> Hapus</button>
                     </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
-                        <div class="form-group" style="margin-bottom: 0;">
-                            <label>Tinggi Logo (px)</label>
-                            <input type="number" id="customLogoHeight" min="20" max="500" value="60" style="width: 100%;">
-                        </div>
-                        <div class="form-group" style="margin-bottom: 0;">
-                            <label>Lebar Logo (px)</label>
-                            <input type="number" id="customLogoWidth" min="20" max="500" value="150" style="width: 100%;">
-                        </div>
-                    </div>
                 </div>
             </div>
 
@@ -2372,8 +2362,6 @@
         async function uploadCustomLogo() {
             const fileInput = document.getElementById('customLogoUpload');
             const btn = document.getElementById('customLogoUploadBtn');
-            const heightInput = document.getElementById('customLogoHeight');
-            const widthInput = document.getElementById('customLogoWidth');
             
             if (!fileInput.files || fileInput.files.length === 0) {
                 alert("Pilih file gambar logo terlebih dahulu!");
@@ -2382,9 +2370,6 @@
 
             const formData = new FormData();
             formData.append('logo', fileInput.files[0]);
-            // Also send height and width
-            formData.append('logoHeight', heightInput?.value || 60);
-            formData.append('logoWidth', widthInput?.value || 150);
 
             try {
                 btn.disabled = true;
@@ -2399,8 +2384,6 @@
                 
                 if (result.success) {
                     config.settings.logoUrl = result.filePath;
-                    config.settings.logoHeight = parseInt(heightInput?.value) || 60;
-                    config.settings.logoWidth = parseInt(widthInput?.value) || 150;
                     updateCustomLogoUI();
                     await saveConfigToServer(true);
                     alert("Custom Logo berhasil diperbarui!");
@@ -2433,61 +2416,15 @@
         function updateCustomLogoUI() {
             const previewContainer = document.getElementById('customLogoPreviewContainer');
             const previewImg = document.getElementById('customLogoPreview');
-            const heightInput = document.getElementById('customLogoHeight');
-            const widthInput = document.getElementById('customLogoWidth');
             if (config.settings.logoUrl) {
                 previewImg.src = isAbsoluteUrl(config.settings.logoUrl) ? config.settings.logoUrl : config.settings.logoUrl;
                 previewContainer.style.display = 'flex';
             } else {
                 previewContainer.style.display = 'none';
             }
-            // Update input values and preview image style
-            if (heightInput) heightInput.value = config.settings.logoHeight || 60;
-            if (widthInput) widthInput.value = config.settings.logoWidth || 150;
-            if (previewImg) {
-                previewImg.style.maxHeight = `${config.settings.logoHeight || 60}px`;
-                previewImg.style.maxWidth = `${config.settings.logoWidth || 150}px`;
-            }
         }
 
-        // Event listeners for custom logo size inputs
-        document.addEventListener('DOMContentLoaded', () => {
-            const heightInput = document.getElementById('customLogoHeight');
-            const widthInput = document.getElementById('customLogoWidth');
-            
-            // Debounce function to prevent too many save requests
-            function debounce(func, wait) {
-                let timeout;
-                return function(...args) {
-                    clearTimeout(timeout);
-                    timeout = setTimeout(() => func.apply(this, args), wait);
-                };
-            }
-            
-            const saveSizeChanges = debounce(async () => {
-                try {
-                    await saveConfigToServer(true);
-                } catch (err) {
-                    console.error('Gagal menyimpan ukuran logo:', err);
-                }
-            }, 500); // Save after 500ms of no changes
-            
-            if (heightInput) {
-                heightInput.addEventListener('input', (e) => {
-                    config.settings.logoHeight = parseInt(e.target.value) || 60;
-                    updateCustomLogoUI();
-                    saveSizeChanges();
-                });
-            }
-            
-            if (widthInput) {
-                widthInput.addEventListener('input', (e) => {
-                    config.settings.logoWidth = parseInt(e.target.value) || 150;
-                    updateCustomLogoUI();
-                    saveSizeChanges();
-                });
-            }
-        });
+
 
         async function uploadLogo() {
             const fileInput = document.getElementById('logoUpload');
