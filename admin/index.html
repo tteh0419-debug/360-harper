@@ -56,6 +56,29 @@
             background: var(--primary);
         }
         
+        /* Custom Arrow Hotspot */
+        .custom-arrow-hotspot {
+            width: 40px !important;
+            height: 40px !important;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23d4af37' stroke='%23fff' stroke-width='1'><path d='M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z'/></svg>") !important;
+            background-size: contain !important;
+            background-repeat: no-repeat !important;
+            background-position: center !important;
+            background-color: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out;
+        }
+        .custom-arrow-hotspot:hover {
+            transform: scale(1.2);
+            filter: drop-shadow(0px 0px 8px rgba(212, 175, 55, 0.8));
+        }
+        /* Override Pannellum's default hotspot bg */
+        .custom-arrow-hotspot.pnlm-hotspot {
+            background-color: transparent !important;
+        }
+        
         /* Sidebar */
         .sidebar {
             width: 280px;
@@ -1715,7 +1738,13 @@
             currentEditingId = sceneId;
             movingHotspotIndex = null;
             const scene = config.scenes[sceneId];
+            // Load existing hotspots
             tempHotspots = JSON.parse(JSON.stringify(scene.hotSpots || []));
+            // Ensure all hotspots have custom class
+            tempHotspots = tempHotspots.map(hs => ({
+                ...hs,
+                cssClass: "custom-arrow-hotspot"
+            }));
             
             document.getElementById('editingSceneTitle').innerText = "Editor Visual: " + scene.title;
             document.getElementById('editorOverlay').style.display = 'flex';
@@ -1756,6 +1785,7 @@
             // Add custom class and events to each hotspot
             const formattedHotspots = tempHotspots.map((hs, index) => ({
                 ...hs,
+                cssClass: "custom-arrow-hotspot",
                 createTooltipFunc: (el) => {
                     el.classList.add('editable-hs');
                     el.setAttribute('data-index', index);
@@ -1902,7 +1932,8 @@
                 type: "scene",
                 text: text || "Ke Scene Baru",
                 sceneId: sceneId || Object.keys(config.scenes)[0] || "exterior",
-                tooltip: text || "Ganti Deskripsi Ini"
+                tooltip: text || "Ganti Deskripsi Ini",
+                cssClass: "custom-arrow-hotspot"
             };
             tempHotspots.push(newHS);
             syncTempToConfig();
