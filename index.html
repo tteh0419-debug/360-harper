@@ -1101,10 +1101,14 @@
                             cssClass: hs.type === 'info' ? 'custom-info-hotspot' : 'custom-arrow-hotspot'
                         };
 
-                        // Add click handler for info hotspots
+                                // Add click handler for info hotspots
                         if (hs.type === 'info') {
-                            processedHs.clickHandler = function() {
-                                showHotspotInfoPopup(hs.text || 'Info', hs.infoText || '');
+                            processedHs.createTooltipFunc = function(el) {
+                                el.addEventListener('click', (event) => {
+                                    event.stopPropagation();
+                                    showHotspotInfoPopup(hs.text || 'Info', hs.infoText || '', el);
+                                });
+                                return el;
                             };
                         }
 
@@ -1162,9 +1166,12 @@
                 const infoContainer = document.getElementById('custom-info-container');
                 const infoTextContent = document.getElementById('info-text-content');
                 const infoPopup = document.getElementById('info-popup');
-                
-                    const sceneInfo = getSceneInfoData(sceneData);
-                if(sceneInfo.text) {
+                const hasInfoHotspot = Array.isArray(sceneData.hotSpots) && sceneData.hotSpots.some(hs => hs.type === 'info');
+                const sceneInfo = getSceneInfoData(sceneData);
+                if (hasInfoHotspot) {
+                    infoContainer.style.display = 'none';
+                    infoPopup.style.display = 'none';
+                } else if (sceneInfo.text) {
                     infoTextContent.innerText = sceneInfo.text;
                     infoPopup.querySelector('h4').innerText = sceneInfo.title;
                     infoContainer.style.display = 'block';
@@ -1187,7 +1194,11 @@
         const infoPopup = document.getElementById('info-popup');
         const sceneInfo = getSceneInfoData(scene);
 
-        if (sceneInfo.text) {
+        const hasInfoHotspot = Array.isArray(scene.hotSpots) && scene.hotSpots.some(hs => hs.type === 'info');
+        if (hasInfoHotspot) {
+            infoContainer.style.display = 'none';
+            infoPopup.style.display = 'none';
+        } else if (sceneInfo.text) {
             document.querySelector('#custom-info-container #info-icon-btn i').className = 'fas fa-info-circle';
             infoTextContent.innerText = sceneInfo.text;
             infoPopup.querySelector('h4').innerText = sceneInfo.title;
@@ -1255,7 +1266,7 @@
 
         // Show popup for info hotspot
         let hotspotInfoPopup = null;
-        function showHotspotInfoPopup(title, text) {
+        function showHotspotInfoPopup(title, text, anchorElement = null) {
             // Remove existing popup if any
             if (hotspotInfoPopup) {
                 hotspotInfoPopup.remove();
@@ -1265,9 +1276,6 @@
             hotspotInfoPopup = document.createElement('div');
             hotspotInfoPopup.style.cssText = `
                 position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
                 background: rgba(17,17,17,0.9);
                 backdrop-filter: blur(16px);
                 -webkit-backdrop-filter: blur(16px);
@@ -1276,7 +1284,7 @@
                 padding: 2rem;
                 z-index: 10001;
                 max-width: 90%;
-                width: 400px;
+                width: 320px;
                 box-shadow: 0 10px 40px rgba(0,0,0,0.5);
                 animation: fade-in-up 0.3s ease;
             `;
@@ -1290,6 +1298,20 @@
                 <p style="color: #ccc; line-height: 1.7; margin: 0; font-size: 0.95rem;">${text}</p>
             `;
             document.body.appendChild(hotspotInfoPopup);
+
+            if (anchorElement) {
+                const rect = anchorElement.getBoundingClientRect();
+                const popupWidth = hotspotInfoPopup.offsetWidth;
+                const left = rect.left + rect.width / 2;
+                const top = rect.bottom + 12;
+                hotspotInfoPopup.style.left = `${left}px`;
+                hotspotInfoPopup.style.top = `${top}px`;
+                hotspotInfoPopup.style.transform = 'translateX(-50%)';
+            } else {
+                hotspotInfoPopup.style.left = '50%';
+                hotspotInfoPopup.style.top = '50%';
+                hotspotInfoPopup.style.transform = 'translate(-50%, -50%)';
+            }
 
             // Close button listener
             document.getElementById('closeHotspotInfo').addEventListener('click', () => {
