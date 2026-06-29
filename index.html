@@ -1187,11 +1187,14 @@
                                 el.classList.add('custom-hotspot-tooltip');
                                 el.style.cursor = 'pointer';
                                 el.style.pointerEvents = 'auto';
+                                el.dataset.hotspotTitle = hs.text || 'Info';
+                                el.dataset.hotspotInfoText = hs.infoText || '';
+                                el.dataset.infoClickBound = 'true';
                                 el.addEventListener('click', function(event) {
                                     console.log('Info hotspot clicked', hs.text, hs.infoText, el);
                                     event.stopPropagation();
                                     event.preventDefault();
-                                    showHotspotInfoPopup(hs.text || 'Info', hs.infoText || '', el);
+                                    showHotspotInfoPopup(el.dataset.hotspotTitle, el.dataset.hotspotInfoText, el);
                                 });
                                 return el;
                             };
@@ -1250,6 +1253,22 @@
                 }
             });
 
+            function attachInfoHotspotClickHandlers() {
+                document.querySelectorAll('.custom-info-hotspot').forEach(el => {
+                    if (el.dataset.infoClickBound === 'true') return;
+                    el.dataset.infoClickBound = 'true';
+                    el.style.cursor = 'pointer';
+                    el.style.pointerEvents = 'auto';
+                    const title = el.dataset.hotspotTitle || el.dataset.tooltip || 'Info';
+                    const text = el.dataset.hotspotInfoText || el.dataset.tooltip || '';
+                    el.addEventListener('click', function(event) {
+                        event.stopPropagation();
+                        event.preventDefault();
+                        showHotspotInfoPopup(title, text, el);
+                    });
+                });
+            }
+
             // Handle custom click handlers for info hotspots
             panoViewer.on('scenechange', (newSceneId) => {
                 currentSceneId = newSceneId;
@@ -1266,6 +1285,7 @@
                 if (hasInfoHotspot) {
                     infoContainer.style.display = 'none';
                     infoPopup.style.display = 'none';
+                    setTimeout(attachInfoHotspotClickHandlers, 250);
                 } else if (sceneInfo.text) {
                     infoTextContent.innerText = sceneInfo.text;
                     infoPopup.querySelector('h4').innerText = sceneInfo.title;
@@ -1293,6 +1313,7 @@
         if (hasInfoHotspot) {
             infoContainer.style.display = 'none';
             infoPopup.style.display = 'none';
+            setTimeout(attachInfoHotspotClickHandlers, 250);
         } else if (sceneInfo.text) {
             document.querySelector('#custom-info-container #info-icon-btn i').className = 'fas fa-info-circle';
             infoTextContent.innerText = sceneInfo.text;
