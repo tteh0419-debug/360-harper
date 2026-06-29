@@ -73,7 +73,7 @@
             display: block; 
             width: 100%; 
             height: 100%; 
-            background-image: url('https://res.cloudinary.com/dn9ulmxic/image/upload/v1782717901/icons8-3d-touch-80_mey71z.png');
+            background-image: url('https://res.cloudinary.com/dn9ulmxic/image/upload/v1782723204/info_wtmnmr.png');
             background-size: contain; 
             background-repeat: no-repeat; 
             background-position: center; 
@@ -1109,7 +1109,10 @@
             <div class="editor-sidebar">
                 <h4 style="margin-bottom: 0.5rem; color: var(--primary);">Tambah Hotspot</h4>
                 <div class="draggable-hotspot-tool" draggable="true" id="newHotspotTool">
-                    <i class="fas fa-plus-circle"></i> DRAG KE GAMBAR
+                    <i class="fas fa-link"></i> HOTSPOT LINK SCENE
+                </div>
+                <div class="draggable-hotspot-tool" draggable="true" id="newInfoHotspotTool" style="margin-top: 0.5rem;">
+                    <i class="fas fa-info-circle"></i> HOTSPOT INFO
                 </div>
 
                 <h4 style="margin-bottom: 0.5rem; color: var(--primary);">Quick Scene Link</h4>
@@ -1779,7 +1782,7 @@
             // Ensure all hotspots have custom class
             tempHotspots = tempHotspots.map(hs => ({
                 ...hs,
-                cssClass: "custom-arrow-hotspot"
+                cssClass: hs.type === 'info' ? "custom-info-hotspot" : "custom-arrow-hotspot"
             }));
             
             document.getElementById('editingSceneTitle').innerText = "Editor Visual: " + scene.title;
@@ -1821,7 +1824,7 @@
             // Add custom class and events to each hotspot
             const formattedHotspots = tempHotspots.map((hs, index) => ({
                 ...hs,
-                cssClass: "custom-arrow-hotspot",
+                cssClass: hs.type === 'info' ? "custom-info-hotspot" : "custom-arrow-hotspot",
                 createTooltipFunc: (el) => {
                     el.classList.add('editable-hs');
                     el.setAttribute('data-index', index);
@@ -1902,6 +1905,7 @@
 
         function setupDragAndDrop() {
             const tool = document.getElementById('newHotspotTool');
+            const infoTool = document.getElementById('newInfoHotspotTool');
             const viewer = document.getElementById('editorViewer');
 
             tool.ondragstart = (e) => {
@@ -1909,6 +1913,13 @@
                 e.dataTransfer.setData('type', 'new-hotspot');
             };
             tool.ondragend = () => {
+                isDraggingNew = false;
+            };
+            infoTool.ondragstart = (e) => {
+                isDraggingNew = true;
+                e.dataTransfer.setData('type', 'info-hotspot');
+            };
+            infoTool.ondragend = () => {
                 isDraggingNew = false;
             };
 
@@ -1934,6 +1945,8 @@
 
                 if (type === 'new-hotspot') {
                     addNewHotspot(coords[0], coords[1]);
+                } else if (type === 'info-hotspot') {
+                    addNewHotspot(coords[0], coords[1], null, "Info", "info");
                 } else if (type === 'scene-hotspot') {
                     addNewHotspot(coords[0], coords[1], data, "Ke " + text);
                 } else if (type === 'move-hotspot') {
@@ -1961,14 +1974,15 @@
             }
         }
 
-        function addNewHotspot(pitch, yaw, sceneId = null, text = null) {
+        function addNewHotspot(pitch, yaw, sceneId = null, text = null, type = "scene") {
             const newHS = {
                 pitch: parseFloat(pitch.toFixed(2)),
                 yaw: parseFloat(yaw.toFixed(2)),
-                type: "scene",
-                text: text || "Ke Scene Baru",
-                sceneId: sceneId || Object.keys(config.scenes)[0] || "exterior",
-                tooltip: text || "Ganti Deskripsi Ini",
+                type: type,
+                text: text || (type === "info" ? "Info" : "Ke Scene Baru"),
+                tooltip: text || (type === "info" ? "Klik untuk informasi" : "Ganti Deskripsi Ini"),
+                infoText: type === "info" ? "Masukkan teks informasi di sini..." : "",
+                sceneId: type === "scene" ? (sceneId || Object.keys(config.scenes)[0] || "exterior") : undefined,
                 cssClass: "custom-arrow-hotspot"
             };
             tempHotspots.push(newHS);
@@ -2056,7 +2070,8 @@
                 const isMoving = movingHotspotIndex === index;
                 const item = document.createElement('div');
                 item.className = `hotspot-edit-item ${isMoving ? 'moving' : ''}`;
-                item.innerHTML = `
+                
+                let content = `
                     <div class="hs-actions">
                         <i class="fas fa-arrows-alt hs-btn hs-move" 
                            draggable="true" 
@@ -2067,18 +2082,42 @@
                         <i class="fas fa-trash hs-btn hs-delete" onclick="removeTempHotspot(${index})" title="Hapus"></i>
                     </div>
                     <div class="form-group" style="margin-bottom: 5px;">
+                        <label style="font-size: 0.7rem;">Tipe Hotspot</label>
+                        <select onchange="updateTempHotspot(${index}, 'type', this.value)" style="padding: 5px; font-size: 0.8rem;">
+                            <option value="scene" ${hs.type === 'scene' ? 'selected' : ''}>Link Scene</option>
+                            <option value="info" ${hs.type === 'info' ? 'selected' : ''}>Info</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 5px;">
                         <label style="font-size: 0.7rem;">Label / Teks</label>
                         <input type="text" value="${hs.text}" onchange="updateTempHotspot(${index}, 'text', this.value)" style="padding: 5px; font-size: 0.8rem;">
                     </div>
-                    <div class="form-group" style="margin-bottom: 5px;">
-                        <label style="font-size: 0.7rem;">Target Scene ID</label>
-                        <select onchange="updateTempHotspot(${index}, 'sceneId', this.value)" style="padding: 5px; font-size: 0.8rem;">
-                            ${Object.keys(config.scenes).map(sid => `<option value="${sid}" ${sid === hs.sceneId ? 'selected' : ''}>${sid}</option>`).join('')}
-                        </select>
-                    </div>
+                `;
+
+                if (hs.type === 'scene') {
+                    content += `
+                        <div class="form-group" style="margin-bottom: 5px;">
+                            <label style="font-size: 0.7rem;">Target Scene ID</label>
+                            <select onchange="updateTempHotspot(${index}, 'sceneId', this.value)" style="padding: 5px; font-size: 0.8rem;">
+                                ${Object.keys(config.scenes).map(sid => `<option value="${sid}" ${sid === hs.sceneId ? 'selected' : ''}>${sid}</option>`).join('')}
+                            </select>
+                        </div>
+                    `;
+                } else if (hs.type === 'info') {
+                    content += `
+                        <div class="form-group" style="margin-bottom: 5px;">
+                            <label style="font-size: 0.7rem;">Teks Informasi</label>
+                            <textarea onchange="updateTempHotspot(${index}, 'infoText', this.value)" style="padding: 5px; font-size: 0.8rem; height: 100px;">${hs.infoText || ''}</textarea>
+                        </div>
+                    `;
+                }
+
+                content += `
                     <div style="font-size: 0.7rem; color: #888;">P: ${hs.pitch} | Y: ${hs.yaw}</div>
                     ${isMoving ? '<div style="color: var(--primary); font-size: 0.7rem; font-weight: bold; margin-top: 5px;">KLIK PADA GAMBAR UNTUK MEMINDAHKAN</div>' : ''}
                 `;
+                
+                item.innerHTML = content;
                 container.appendChild(item);
             });
         }
