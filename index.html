@@ -107,7 +107,7 @@
             pointer-events: none; 
         } 
         #custom-logo { 
-            height: 90px; 
+            height: 120px; 
             width: auto; 
             object-fit: contain; 
             display: none; 
@@ -220,7 +220,7 @@
             display: block; 
             width: 100%; 
             height: 100%; 
-            background-image: url('https://res.cloudinary.com/dn9ulmxic/image/upload/v1782723204/info_wtmnmr.png ');
+            background-image: url('https://res.cloudinary.com/dn9ulmxic/image/upload/v1782723204/info_wtmnmr.png');
             background-size: contain; 
             background-repeat: no-repeat; 
             background-position: center; 
@@ -1163,9 +1163,12 @@
                 const infoTextContent = document.getElementById('info-text-content');
                 const infoPopup = document.getElementById('info-popup');
                 
-                if(sceneData && sceneData.infoText && sceneData.infoText.trim()) {
-                    infoTextContent.innerText = sceneData.infoText;
+                    const sceneInfo = getSceneInfoData(sceneData);
+                if(sceneInfo.text) {
+                    infoTextContent.innerText = sceneInfo.text;
+                    infoPopup.querySelector('h4').innerText = sceneInfo.title;
                     infoContainer.style.display = 'block';
+                    positionInfoIcon();
                 } else {
                     infoContainer.style.display = 'none';
                     infoPopup.style.display = 'none'; // Hide popup too if no info
@@ -1182,10 +1185,14 @@
         const infoContainer = document.getElementById('custom-info-container');
         const infoTextContent = document.getElementById('info-text-content');
         const infoPopup = document.getElementById('info-popup');
-        
-        if(scene && scene.infoText && scene.infoText.trim()) {
-            infoTextContent.innerText = scene.infoText;
+        const sceneInfo = getSceneInfoData(scene);
+
+        if (sceneInfo.text) {
+            document.querySelector('#custom-info-container #info-icon-btn i').className = 'fas fa-info-circle';
+            infoTextContent.innerText = sceneInfo.text;
+            infoPopup.querySelector('h4').innerText = sceneInfo.title;
             infoContainer.style.display = 'block';
+            positionInfoIcon();
         } else {
             infoContainer.style.display = 'none';
             infoPopup.style.display = 'none';
@@ -1216,11 +1223,35 @@
             document.getElementById('infoPanel').classList.add('open');
         }
 
+        function getSceneInfoData(scene) {
+            if (!scene) return { title: '', text: '', imgUrl: '' };
+            const infoHotspot = Array.isArray(scene.hotSpots) ? scene.hotSpots.find(hs => hs.type === 'info') : null;
+            const infoText = infoHotspot?.infoText?.trim() || scene.infoText?.trim() || '';
+            return {
+                title: infoHotspot?.text || scene.title || 'Informasi',
+                text: infoText,
+                imgUrl: scene.previewImg || scene.panorama || ''
+            };
+        }
+
         function updateInfoPreview(title, desc, imgUrl) {
             document.getElementById('infoTitle').innerText = title;
             document.getElementById('infoDesc').innerText = desc;
             if(imgUrl) document.getElementById('infoImage').src = isAbsoluteUrl(imgUrl) ? imgUrl : imgUrl;
         }
+
+        function positionInfoIcon() {
+            const logoOverlay = document.querySelector('.logo-overlay');
+            const infoContainer = document.getElementById('custom-info-container');
+            if (!logoOverlay || !infoContainer) return;
+
+            const rect = logoOverlay.getBoundingClientRect();
+            infoContainer.style.left = `${rect.left}px`;
+            infoContainer.style.top = `${rect.bottom + 10}px`;
+            infoContainer.style.transform = 'none';
+        }
+
+        window.addEventListener('resize', positionInfoIcon);
 
         // Show popup for info hotspot
         let hotspotInfoPopup = null;
