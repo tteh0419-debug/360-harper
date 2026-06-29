@@ -73,7 +73,7 @@
             display: block; 
             width: 100%; 
             height: 100%; 
-            background-image: url('https://res.cloudinary.com/dn9ulmxic/image/upload/v1782721463/letter-h_waejqo.png');
+            background-image: url('https://res.cloudinary.com/dn9ulmxic/image/upload/v1782717901/icons8-3d-touch-80_mey71z.png');
             background-size: contain; 
             background-repeat: no-repeat; 
             background-position: center; 
@@ -1080,6 +1080,10 @@
                     <label>Deskripsi</label>
                     <textarea id="sceneDesc" rows="3"></textarea>
                 </div>
+                <div class="form-group">
+                    <label>Informasi Scene (Opsional)</label>
+                    <textarea id="sceneInfoText" rows="5" placeholder="Tulis informasi tambahan untuk scene ini..."></textarea>
+                </div>
                 
                 <div id="modalActionContainer">
                     <button type="submit" class="btn btn-primary" style="width: 100%;">SIMPAN & EDIT VISUAL</button>
@@ -1349,7 +1353,8 @@
                 const updates = {
                     title: document.getElementById('sceneTitle').value,
                     description: document.getElementById('sceneDesc').value,
-                    panorama: document.getElementById('scenePanorama').value
+                    panorama: document.getElementById('scenePanorama').value,
+                    infoText: document.getElementById('sceneInfoText').value
                 };
 
                 // Apply to local config
@@ -1385,6 +1390,13 @@
         });
 
         document.getElementById('sceneDesc').addEventListener('input', function() {
+            const editId = document.getElementById('editSceneId').value;
+            if (editId) {
+                triggerSceneAutoSave(editId);
+            }
+        });
+
+        document.getElementById('sceneInfoText').addEventListener('input', function() {
             const editId = document.getElementById('editSceneId').value;
             if (editId) {
                 triggerSceneAutoSave(editId);
@@ -1630,6 +1642,7 @@
             const sceneIdInput = document.getElementById('sceneId');
             const sceneTitleInput = document.getElementById('sceneTitle');
             const sceneDescInput = document.getElementById('sceneDesc');
+            const sceneInfoTextInput = document.getElementById('sceneInfoText');
             const previewDiv = document.getElementById('modalPanoramaPreview');
             
             form.reset();
@@ -1644,6 +1657,7 @@
                 sceneTitleInput.value = scene.title;
                 document.getElementById('scenePanorama').value = scene.panorama;
                 sceneDescInput.value = scene.description;
+                sceneInfoTextInput.value = scene.infoText || '';
                 title.innerText = "Edit Info Scene: " + scene.title;
                 
                 if (previewDiv && scene.panorama) {
@@ -1706,6 +1720,7 @@
                     type: "equirectangular",
                     panorama: panoramaPath,
                     description: document.getElementById('sceneDesc').value,
+                    infoText: document.getElementById('sceneInfoText').value,
                     previewImg: panoramaPath,
                     hfov: editId ? (config.scenes[editId].hfov || 100) : 100,
                     pitch: editId ? (config.scenes[editId].pitch || 0) : 0,
