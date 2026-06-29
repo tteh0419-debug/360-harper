@@ -139,9 +139,9 @@
         /* Invisible Trigger Zones */
         .trigger-zone {
             position: fixed;
-            background: rgba(255, 0, 0, 0.3); /* Temporarily visible red for debugging */
+            background: transparent; /* Hide the debug red overlay */
             z-index: 99999; /* Super high z-index */
-            pointer-events: auto;
+            pointer-events: none; /* Don't block clicks on elements below */
         }
         .trigger-bottom {
             bottom: 0;
