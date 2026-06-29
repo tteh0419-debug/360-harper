@@ -113,6 +113,29 @@
             display: none; /* Sembunyikan dulu sampai data termuat */ 
         }
 
+        /* Custom Arrow Hotspot */
+        .custom-arrow-hotspot {
+            width: 40px !important;
+            height: 40px !important;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23d4af37' stroke='%23fff' stroke-width='1'><path d='M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z'/></svg>") !important;
+            background-size: contain !important;
+            background-repeat: no-repeat !important;
+            background-position: center !important;
+            background-color: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out;
+        }
+        .custom-arrow-hotspot:hover {
+            transform: scale(1.2);
+            filter: drop-shadow(0px 0px 8px rgba(212, 175, 55, 0.8));
+        }
+        /* Override Pannellum's default hotspot bg */
+        .custom-arrow-hotspot.pnlm-hotspot {
+            background-color: transparent !important;
+        }
+
         /* Sidebar */
         .sidebar {
             position: fixed;
@@ -872,15 +895,26 @@
             // Helper to check if URL is absolute
             const isAbsoluteUrl = (url) => url.startsWith('http://') || url.startsWith('https://') || url.startsWith('//');
             
-            // Prepare scenes with correct paths
+            // Prepare scenes with correct paths and custom hotspot class
             const processedScenes = {};
             for (const id in tourConfig.scenes) {
-                processedScenes[id] = {
-                    ...tourConfig.scenes[id],
-                    panorama: isAbsoluteUrl(tourConfig.scenes[id].panorama) ? 
-                              tourConfig.scenes[id].panorama : 
-                              '/' + tourConfig.scenes[id].panorama
-                };
+                const scene = { ...tourConfig.scenes[id] };
+                
+                // Process hotspots if any
+                if (scene.hotSpots && Array.isArray(scene.hotSpots)) {
+                    scene.hotSpots = scene.hotSpots.map(hs => ({
+                        ...hs,
+                        cssClass: 'custom-arrow-hotspot'
+                    }));
+                }
+                
+                scene.panorama = isAbsoluteUrl(scene.panorama) ? 
+                                  scene.panorama : 
+                                  '/' + scene.panorama;
+                
+                processedScenes[id] = scene;
+                // Update tourConfig.scenes so loadScene also works
+                tourConfig.scenes[id] = scene;
             }
 
             // initial viewer setup with multi-scene support
