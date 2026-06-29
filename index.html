@@ -1182,15 +1182,28 @@
                         };
 
                                 if (hs.type === 'info') {
-                            processedHs.clickHandlerFunc = function(event, args) {
-                                const target = event && event.target ? event.target : null;
-                                const hotspotEl = target ? target.closest('.pnlm-hotspot') : null;
-                                showHotspotInfoPopup(hs.text || 'Info', hs.infoText || '', hotspotEl || target);
-                            };
                             processedHs.tooltip = hs.text || hs.infoText || 'Info';
                             processedHs.createTooltipFunc = function(el) {
                                 el.classList.add('custom-hotspot-tooltip');
+                                el.style.cursor = 'pointer';
+                                el.style.pointerEvents = 'auto';
+                                el.addEventListener('click', function(event) {
+                                    console.log('Info hotspot clicked', hs.text, hs.infoText, el);
+                                    event.stopPropagation();
+                                    event.preventDefault();
+                                    showHotspotInfoPopup(hs.text || 'Info', hs.infoText || '', el);
+                                });
                                 return el;
+                            };
+                            processedHs.clickHandlerFunc = function(event, args) {
+                                console.log('Info hotspot clickHandlerFunc', hs.text, hs.infoText, event, args);
+                                if (event && typeof event.stopPropagation === 'function') {
+                                    event.stopPropagation();
+                                    event.preventDefault();
+                                }
+                                const target = event && event.target ? event.target : null;
+                                const hotspotEl = target ? target.closest('.pnlm-hotspot') : null;
+                                showHotspotInfoPopup(hs.text || 'Info', hs.infoText || '', hotspotEl || target);
                             };
                         }
 
