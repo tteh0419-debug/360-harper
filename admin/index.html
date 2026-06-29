@@ -1204,6 +1204,7 @@
         let movingHotspotIndex = null;
         let isDraggingNew = false;
         let draggedHSIndex = null;
+        let pendingHotspotType = null;
         let hasUnsavedChanges = false;
         let autoSaveTimeout = null;
         let sceneAutoSaveTimeout = null;
@@ -1916,12 +1917,25 @@
             tool.ondragend = () => {
                 isDraggingNew = false;
             };
+            tool.onclick = () => {
+                pendingHotspotType = 'scene';
+                alert('Klik pada panorama untuk menambahkan hotspot scene.');
+            };
+
             infoTool.ondragstart = (e) => {
                 isDraggingNew = true;
                 e.dataTransfer.setData('type', 'info-hotspot');
             };
             infoTool.ondragend = () => {
                 isDraggingNew = false;
+            };
+            infoTool.onclick = () => {
+                if (tempHotspots.some(hs => hs.type === 'info')) {
+                    alert('Setiap scene hanya boleh memiliki satu hotspot informasi. Hapus hotspot informasi yang ada terlebih dahulu jika ingin mengganti.');
+                    return;
+                }
+                pendingHotspotType = 'info';
+                alert('Klik pada panorama untuk menambahkan hotspot informasi.');
             };
 
             viewer.ondragover = (e) => {
@@ -1977,10 +1991,23 @@
                 movingHotspotIndex = null;
                 syncTempToConfig();
                 refreshEditorView();
-            } else {
-                if (confirm(`Tambah hotspot baru di sini?`)) {
-                    addNewHotspot(pitch, yaw);
-                }
+                return;
+            }
+
+            if (pendingHotspotType === 'info') {
+                addNewHotspot(pitch, yaw, null, 'Info', 'info');
+                pendingHotspotType = null;
+                return;
+            }
+
+            if (pendingHotspotType === 'scene') {
+                addNewHotspot(pitch, yaw);
+                pendingHotspotType = null;
+                return;
+            }
+
+            if (confirm('Tambah hotspot baru di sini?')) {
+                addNewHotspot(pitch, yaw);
             }
         }
 
