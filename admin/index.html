@@ -790,6 +790,20 @@
                         <!-- Dinamis -->
                     </select>
                 </div>
+                <div class="form-group">
+                    <label><i class="fas fa-image"></i> Upload Logo Custom (sesuai permintaan)</label>
+                    <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <input type="file" id="customLogoUpload" accept="image/*" style="flex: 1;">
+                        <button type="button" class="btn btn-primary" onclick="uploadCustomLogo()" id="customLogoUploadBtn">
+                            <i class="fas fa-upload"></i> Upload Logo
+                        </button>
+                    </div>
+                    <div id="customLogoPreviewContainer" class="music-item" style="height: auto; padding: 10px; display: none;">
+                        <span>Logo saat ini: </span>
+                        <img id="customLogoPreview" src="" alt="Custom Logo Preview" style="max-height: 60px; margin-left: 10px;">
+                        <button class="action-btn delete-btn" onclick="deleteCustomLogo()" style="margin-left: auto;"><i class="fas fa-trash"></i> Hapus</button>
+                    </div>
+                </div>
             </div>
 
             <div class="settings-card admin-only">
@@ -1508,8 +1522,9 @@
                 console.log('📸 Jumlah scenes:', Object.keys(config.scenes || {}).length);
                 if (!config.scenes) config.scenes = {};
                 if (!config.default) config.default = { firstScene: "", type: "equirectangular" };
-                if (!config.settings) config.settings = { logo: "", music: { url: "", autoPlay: true }, footer: {} };
+                if (!config.settings) config.settings = { logo: "", logoUrl: "", music: { url: "", autoPlay: true }, footer: {} };
                 renderScenes();
+                updateCustomLogoUI();
             } catch (e) {
                 console.error("❌ Gagal load config", e);
                 showServerError();
@@ -2308,6 +2323,70 @@
             } catch (error) {
                 console.error("Delete error:", error);
                 alert("Terjadi kesalahan koneksi ke server.");
+            }
+        }
+
+        async function uploadCustomLogo() {
+            const fileInput = document.getElementById('customLogoUpload');
+            const btn = document.getElementById('customLogoUploadBtn');
+            
+            if (!fileInput.files || fileInput.files.length === 0) {
+                alert("Pilih file gambar logo terlebih dahulu!");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('logo', fileInput.files[0]);
+
+            try {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+                
+                const uploadUrl = getApiUrl('/api/upload-logo');
+                const response = await fetch(uploadUrl, { method: 'POST', body: formData });
+                
+                if (!response.ok) throw new Error(`Server responded with ${response.status}`);
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    config.settings.logoUrl = result.filePath;
+                    updateCustomLogoUI();
+                    alert("Custom Logo berhasil diperbarui!");
+                    fileInput.value = '';
+                } else {
+                    alert("Gagal upload custom logo: " + result.message);
+                }
+            } catch (error) {
+                console.error("Custom logo upload error:", error);
+                alert("Terjadi kesalahan koneksi ke server.\n\nDetail: " + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-upload"></i> Upload Logo';
+            }
+        }
+
+        async function deleteCustomLogo() {
+            if (!confirm("Hapus custom logo?")) return;
+            try {
+                config.settings.logoUrl = "";
+                updateCustomLogoUI();
+                await saveConfigToServer(true);
+                alert("Custom logo berhasil dihapus.");
+            } catch (error) {
+                console.error("Delete custom logo error:", error);
+                alert("Terjadi kesalahan koneksi ke server.");
+            }
+        }
+
+        function updateCustomLogoUI() {
+            const previewContainer = document.getElementById('customLogoPreviewContainer');
+            const previewImg = document.getElementById('customLogoPreview');
+            if (config.settings.logoUrl) {
+                previewImg.src = isAbsoluteUrl(config.settings.logoUrl) ? config.settings.logoUrl : config.settings.logoUrl;
+                previewContainer.style.display = 'flex';
+            } else {
+                previewContainer.style.display = 'none';
             }
         }
 
