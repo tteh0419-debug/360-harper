@@ -920,6 +920,11 @@
     bgMusic.addEventListener('error', (e) => {
         console.warn("Audio file could not be loaded. Please check the URL or your internet connection.");
     });
+    bgMusic.addEventListener('canplaythrough', () => {
+        console.log("Audio siap diputar");
+    });
+    // Set initial state
+    updateMusicUIState();
 
     // Fungsi load scene dengan smooth transition
     function loadScene(sceneId, fade=true) {
@@ -1301,7 +1306,20 @@
             onComplete: () => {
                 document.getElementById('welcomeModal').style.display = 'none';
                 // Always play music when tour starts
-                bgMusic.play().then(updateMusicUIState).catch(e => console.log("Autoplay blocked:", e));
+                try {
+                    bgMusic.currentTime = 0;
+                    bgMusic.play()
+                        .then(() => {
+                            console.log("Musik berhasil diputar!");
+                            updateMusicUIState();
+                        })
+                        .catch((error) => {
+                            console.error("Gagal memutar musik:", error);
+                            alert("Silakan klik tombol musik di pojok kanan atas untuk memulai musik.");
+                        });
+                } catch (error) {
+                    console.error("Error saat memutar musik:", error);
+                }
             }
         });
         
