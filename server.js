@@ -501,6 +501,51 @@ app.post('/api/upload-music', upload.single('music'), async (req, res) => {
     }
 });
 
+// API to upload custom logo (sesuai permintaan)
+app.post('/api/upload-logo', upload.single('logo'), async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ success: false, message: 'File logo belum dipilih' });
+        }
+
+        // Upload logo ke Cloudinary
+        const result = await uploadToCloudinary(req.file.buffer, {
+            folder: 'harper-360/logos'
+        });
+
+        // Update logoUrl di Firestore (jika menggunakan Firebase)
+        if (useFirebase && db) {
+            const docRef = db.collection('settings').doc('config');
+            const doc = await docRef.get();
+            if (doc.exists) {
+                await docRef.update({
+                    'settings.logoUrl': result.secure_url
+                });
+            } else {
+                await docRef.set({
+                    scenes: {},
+                    default: { firstScene: "", type: "equirectangular" },
+                    settings: { logoUrl: result.secure_url, logo: "", music: { url: "", autoPlay: true }, footer: {} }
+                });
+            }
+        }
+
+        res.json({ 
+            success: true, 
+            message: 'Logo berhasil diunggah', 
+            filePath: result.secure_url,
+            url: result.secure_url
+        });
+    } catch (error) {
+        console.error('Custom Logo Upload Error:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Gagal mengunggah logo. Pastikan format file adalah gambar.',
+            error: error.message 
+        });
+    }
+});
+
 // API to delete file
 app.post('/api/delete-file', async (req, res) => {
     try {
