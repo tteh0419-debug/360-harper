@@ -141,19 +141,21 @@
             position: fixed;
             background: transparent; /* Hide the debug red overlay */
             z-index: 99999; /* Super high z-index */
-            pointer-events: none; /* Don't block clicks on elements below */
         }
         .trigger-bottom {
             bottom: 0;
-            left: 0;
-            width: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px; /* Only cover the mini map area */
             height: 60px;
+            pointer-events: auto;
         }
         .trigger-right {
             right: 0;
             top: 0;
             height: 100%;
             width: 60px;
+            pointer-events: auto;
         }
 
         /* Sidebar */
@@ -1300,10 +1302,8 @@
             duration: 1,
             onComplete: () => {
                 document.getElementById('welcomeModal').style.display = 'none';
-                // Play music if autoPlay is true in config
-                if (tourConfig.settings && tourConfig.settings.music && tourConfig.settings.music.autoPlay) {
-                    bgMusic.play().then(updateMusicUIState).catch(e => console.log("Autoplay blocked:", e));
-                }
+                // Always play music when tour starts
+                bgMusic.play().then(updateMusicUIState).catch(e => console.log("Autoplay blocked:", e));
             }
         });
         
