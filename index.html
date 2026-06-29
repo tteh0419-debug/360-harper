@@ -923,8 +923,6 @@
     bgMusic.addEventListener('canplaythrough', () => {
         console.log("Audio siap diputar");
     });
-    // Set initial state
-    updateMusicUIState();
 
     // Fungsi load scene dengan smooth transition
     function loadScene(sceneId, fade=true) {
@@ -1103,6 +1101,9 @@
             musicBtn.style.color = "#111";
         }
     }
+    
+    // Set initial state after musicBtn is defined
+    updateMusicUIState();
 
     musicBtn.addEventListener('click', () => {
         if(bgMusic.paused) {
