@@ -1181,13 +1181,15 @@
                             cssClass: hs.type === 'info' ? 'custom-info-hotspot' : 'custom-arrow-hotspot'
                         };
 
-                                // Add click handler for info hotspots
-                        if (hs.type === 'info') {
+                                if (hs.type === 'info') {
+                            processedHs.clickHandlerFunc = function(event, args) {
+                                const target = event && event.target ? event.target : null;
+                                const hotspotEl = target ? target.closest('.pnlm-hotspot') : null;
+                                showHotspotInfoPopup(hs.text || 'Info', hs.infoText || '', hotspotEl || target);
+                            };
+                            processedHs.tooltip = hs.text || hs.infoText || 'Info';
                             processedHs.createTooltipFunc = function(el) {
-                                el.addEventListener('click', (event) => {
-                                    event.stopPropagation();
-                                    showHotspotInfoPopup(hs.text || 'Info', hs.infoText || '', el);
-                                });
+                                el.classList.add('custom-hotspot-tooltip');
                                 return el;
                             };
                         }
