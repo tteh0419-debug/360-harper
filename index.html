@@ -98,6 +98,21 @@
             filter: drop-shadow(0 4px 24px rgba(200,169,106,0.4));
         }
 
+        /* Custom Logo Container (sesuai permintaan) */
+        #custom-logo-container { 
+            position: absolute; 
+            top: 20px; 
+            left: 20px; 
+            z-index: 1000; 
+            pointer-events: none; 
+        } 
+        #custom-logo { 
+            max-height: 60px; 
+            max-width: 150px; 
+            object-fit: contain; 
+            display: none; /* Sembunyikan dulu sampai data termuat */ 
+        }
+
         /* Sidebar */
         .sidebar {
             position: fixed;
@@ -675,6 +690,8 @@
     <a href="admin/login.html" class="admin-link" title="Admin Login"><i class="fas fa-user-shield"></i></a>
 </div>
 
+<div id="custom-logo-container"><img id="custom-logo" src="" alt="Logo"></div>
+
 <div class="logo-overlay">
     <img id="mainLogo" src="foto/Logo - Harper (WHITE).png" alt="Harper Logo">
 </div>
@@ -710,6 +727,16 @@
                 tourConfig = await response.json();
             }
             
+            // Update Custom Logo (sesuai permintaan: logoUrl di settings/config)
+            const customLogoContainer = document.getElementById('custom-logo-container');
+            const customLogo = document.getElementById('custom-logo');
+            if (tourConfig.settings && tourConfig.settings.logoUrl) {
+                customLogo.src = isAbsoluteUrl(tourConfig.settings.logoUrl) ? tourConfig.settings.logoUrl : tourConfig.settings.logoUrl;
+                customLogo.style.display = 'block';
+            } else {
+                customLogo.style.display = 'none';
+            }
+
             // Update Logo from config
             const logoOverlay = document.querySelector('.logo-overlay');
             const mainLogo = document.getElementById('mainLogo');
