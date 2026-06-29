@@ -70,7 +70,7 @@
         /* Logo Overlay */
         .logo-overlay {
             position: fixed;
-            top: 0,75rem;
+            top: 0.75rem;
             left: 2rem;
             z-index: 900;
             pointer-events: auto;
@@ -98,19 +98,19 @@
             filter: drop-shadow(0 4px 24px rgba(200,169,106,0.4));
         }
 
-        /* Custom Logo Container (sesuai permintaan) */
+        /* Custom Logo Container (fixed) */
         #custom-logo-container { 
-            position: absolute; 
+            position: fixed; 
             top: 10px; 
-            left: 20px; 
-            z-index: 1000; 
+            left: 15px; 
+            z-index: 9999; 
             pointer-events: none; 
         } 
         #custom-logo { 
-            max-height: 60px; 
-            max-width: 150px; 
+            height: 55px; 
+            width: auto; 
             object-fit: contain; 
-            display: none; /* Sembunyikan dulu sampai data termuat */ 
+            display: none; 
         }
 
         /* Custom Arrow Hotspot */
@@ -809,17 +809,11 @@
                 tourConfig = await response.json();
             }
             
-            // Update Custom Logo (sesuai permintaan: logoUrl di settings/config)
+            // Update Custom Logo (fixed position/size)
             const customLogoContainer = document.getElementById('custom-logo-container');
             const customLogo = document.getElementById('custom-logo');
-            console.log('Custom Logo Config:', tourConfig.settings);
             if (tourConfig.settings && tourConfig.settings.logoUrl) {
                 customLogo.src = isAbsoluteUrl(tourConfig.settings.logoUrl) ? tourConfig.settings.logoUrl : tourConfig.settings.logoUrl;
-                const height = tourConfig.settings.logoHeight || 60;
-                const width = tourConfig.settings.logoWidth || 150;
-                console.log('Applying custom logo size:', height, width);
-                customLogo.style.maxHeight = `${height}px`;
-                customLogo.style.maxWidth = `${width}px`;
                 customLogo.style.display = 'block';
             } else {
                 customLogo.style.display = 'none';
