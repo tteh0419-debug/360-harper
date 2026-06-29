@@ -240,10 +240,19 @@
             display: flex;
             flex-direction: column;
             gap: 0.75rem;
-            z-index: 900;
+            z-index: 9999;
             transform: translateX(80%);
             transition: transform 0.3s ease-in-out;
             padding-right: 1.5rem; /* Extra padding to make hover area bigger */
+        }
+        .controls-panel::before {
+            content: "";
+            position: absolute;
+            left: -40px;
+            top: 0;
+            width: 40px;
+            height: 100%;
+            background: transparent;
         }
         .controls-panel:hover, .controls-panel.mobile-open {
             transform: translateX(0);
@@ -294,12 +303,21 @@
             border-bottom: none;
             display: flex;
             gap: 1rem;
-            z-index: 900;
+            z-index: 9999;
             font-size: 0.9rem;
             font-weight: 500;
             box-shadow: var(--shadow-soft);
             transition: transform 0.3s ease-in-out;
             padding-top: 1.5rem; /* Extra top padding to make the visible area bigger for hover/tap */
+        }
+        .mini-map::before {
+            content: "";
+            position: absolute;
+            top: -40px;
+            left: 0;
+            width: 100%;
+            height: 40px;
+            background: transparent;
         }
         .mini-map:hover, .mini-map.mobile-open {
             transform: translateX(-50%) translateY(0);
