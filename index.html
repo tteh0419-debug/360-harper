@@ -107,10 +107,85 @@
             pointer-events: none; 
         } 
         #custom-logo { 
-            height: 90px; 
+            height: 120px; 
             width: auto; 
             object-fit: contain; 
             display: none; 
+        }
+
+        /* Custom Info Scene Container */
+        #custom-info-container {
+            position: absolute;
+            top: 160px;
+            left: 20px;
+            z-index: 9999;
+            pointer-events: auto;
+            display: none; /* Hidden by default */
+        }
+
+        /* Info Icon Button */
+        #info-icon-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-soft);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        #info-icon-btn:hover {
+            transform: scale(1.1);
+            box-shadow: var(--glow);
+        }
+
+        /* Info Popup Box */
+        #info-popup {
+            position: absolute;
+            top: 60px;
+            left: 0;
+            width: 320px;
+            max-width: 85vw;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-soft);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            display: none;
+            animation: fadeInUp 0.3s ease;
+        }
+
+        #info-popup h4 {
+            color: var(--primary);
+            margin-bottom: 0.75rem;
+            font-family: 'Playfair Display', serif;
+        }
+
+        #info-popup p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* Container utama - Biarkan diatur sepenuhnya oleh Pannellum */ 
@@ -130,7 +205,7 @@
             display: block; 
             width: 100%; 
             height: 100%; 
-            background-image: url('https://res.cloudinary.com/dn9ulmxic/image/upload/v1782721463/letter-h_waejqo.png');
+            background-image: url('https://res.cloudinary.com/dn9ulmxic/image/upload/v1782717901/icons8-3d-touch-80_mey71z.png');
             background-size: contain; 
             background-repeat: no-repeat; 
             background-position: center; 
@@ -805,6 +880,16 @@
 
 <div id="custom-logo-container"><img id="custom-logo" src="" alt="Logo"></div>
 
+<div id="custom-info-container">
+    <button id="info-icon-btn">
+        <i class="fas fa-info-circle"></i>
+    </button>
+    <div id="info-popup">
+        <h4>Informasi Scene</h4>
+        <p id="info-text-content"></p>
+    </div>
+</div>
+
 <div class="logo-overlay">
     <img id="mainLogo" src="foto/Logo - Harper (WHITE).png" alt="Harper Logo">
 </div>
@@ -1041,12 +1126,39 @@
                 const sceneData = tourConfig.scenes[newSceneId];
                 if(sceneData) updateInfoPreview(sceneData.title, sceneData.description, sceneData.previewImg);
                 
+                // Handle Info Scene
+                const infoContainer = document.getElementById('custom-info-container');
+                const infoTextContent = document.getElementById('info-text-content');
+                const infoPopup = document.getElementById('info-popup');
+                
+                if(sceneData && sceneData.infoText && sceneData.infoText.trim()) {
+                    infoTextContent.innerText = sceneData.infoText;
+                    infoContainer.style.display = 'block';
+                } else {
+                    infoContainer.style.display = 'none';
+                    infoPopup.style.display = 'none'; // Hide popup too if no info
+                }
+                
                 progressBar.style.width = "100%";
                 setTimeout(()=> progressBar.style.width = "0%", 500);
             });
         }
         
         updateInfoPreview(scene.title, scene.description, scene.previewImg);
+        
+        // Handle Info Scene for initial load
+        const infoContainer = document.getElementById('custom-info-container');
+        const infoTextContent = document.getElementById('info-text-content');
+        const infoPopup = document.getElementById('info-popup');
+        
+        if(scene && scene.infoText && scene.infoText.trim()) {
+            infoTextContent.innerText = scene.infoText;
+            infoContainer.style.display = 'block';
+        } else {
+            infoContainer.style.display = 'none';
+            infoPopup.style.display = 'none';
+        }
+        
         progressBar.style.width = "100%";
         setTimeout(()=> progressBar.style.width = "0%", 800);
     }
@@ -1141,6 +1253,26 @@
         } else {
             bgMusic.pause();
             updateMusicUIState();
+        }
+    });
+
+    // Info Scene Control
+    const infoIconBtn = document.getElementById('info-icon-btn');
+    const infoPopup = document.getElementById('info-popup');
+
+    infoIconBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if(infoPopup.style.display === 'block') {
+            infoPopup.style.display = 'none';
+        } else {
+            infoPopup.style.display = 'block';
+        }
+    });
+
+    // Close popup when clicking outside
+    document.addEventListener('click', (e) => {
+        if(!infoPopup.contains(e.target) && !infoIconBtn.contains(e.target)) {
+            infoPopup.style.display = 'none';
         }
     });
     
