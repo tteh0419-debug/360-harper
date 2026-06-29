@@ -107,7 +107,7 @@
             pointer-events: none; 
         } 
         #custom-logo { 
-            height: 120px; 
+            height: 90px; 
             width: auto; 
             object-fit: contain; 
             display: none; 
@@ -128,6 +128,8 @@
             transition: transform 0.2s ease-in-out;
             /* Pulsing animation */
             animation: hotspotPulse 2s infinite ease-in-out;
+            /* Center the hotspot exactly (width/2 and height/2) */
+            margin: -20px 0 0 -20px !important;
         }
         .custom-arrow-hotspot:hover {
             transform: scale(1.2);
