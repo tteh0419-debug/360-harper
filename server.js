@@ -525,7 +525,12 @@ app.post('/api/upload-logo', upload.single('logo'), async (req, res) => {
                 await docRef.set({
                     scenes: {},
                     default: { firstScene: "", type: "equirectangular" },
-                    settings: { logoUrl: result.secure_url, logo: "", music: { url: "", autoPlay: true }, footer: {} }
+                    settings: { 
+                        logoUrl: result.secure_url, 
+                        logo: "", 
+                        music: { url: "", autoPlay: true }, 
+                        footer: {} 
+                    }
                 });
             }
         }
