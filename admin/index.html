@@ -763,6 +763,7 @@
                 <div style="display: flex; gap: 1rem; align-items: center;">
                     <span id="serverStatusBadge" class="badge" style="padding: 5px 10px; border-radius: 20px; font-size: 0.75rem; background: #555; color: #fff;">Server: Mengecek...</span>
                     <span id="autoSaveStatus" style="font-size: 0.8rem; color: #888;"></span>
+                    <button class="btn btn-secondary" onclick="loadConfig()"><i class="fas fa-sync-alt"></i> Refresh Config</button>
                     <button class="btn btn-primary" onclick="saveConfigToServer()"><i class="fas fa-save"></i> Simpan Permanen</button>
                     <button class="btn btn-secondary" onclick="exportConfig()"><i class="fas fa-download"></i> Backup JSON</button>
                     <button class="btn btn-primary" onclick="editScene()"><i class="fas fa-plus"></i> Tambah Scene</button>
@@ -1500,14 +1501,17 @@
 
         async function loadConfig() {
             try {
-                const response = await fetch(getApiUrl('/config.json?v=' + Date.now()));
+                console.log('📥 Memuat config dari server...');
+                const response = await fetch(getApiUrl('/api/config?v=' + Date.now()));
                 config = await response.json();
+                console.log('✅ Config diterima:', config);
+                console.log('📸 Jumlah scenes:', Object.keys(config.scenes || {}).length);
                 if (!config.scenes) config.scenes = {};
                 if (!config.default) config.default = { firstScene: "", type: "equirectangular" };
                 if (!config.settings) config.settings = { logo: "", music: { url: "", autoPlay: true }, footer: {} };
                 renderScenes();
             } catch (e) {
-                console.error("Gagal load config", e);
+                console.error("❌ Gagal load config", e);
                 showServerError();
             }
         }
@@ -1519,12 +1523,14 @@
         function renderScenes() {
             const grid = document.getElementById('sceneGrid');
             grid.innerHTML = '';
+            console.log('🎨 Rendering', Object.keys(config.scenes || {}).length, 'scenes...');
             
             for (const [id, scene] of Object.entries(config.scenes)) {
                 const card = document.createElement('div');
                 card.className = 'scene-card';
                 // Encode URL to handle spaces in filenames
                 const thumbUrl = isAbsoluteUrl(scene.panorama) ? scene.panorama : encodeURI('../' + scene.panorama);
+                console.log(`   Scene ${id} | panorama:`, scene.panorama, '| thumbUrl:', thumbUrl);
                 card.innerHTML = `
                     <div class="scene-thumb" style="background-image: url('${thumbUrl}')"></div>
                     <div class="scene-info">
@@ -1542,6 +1548,7 @@
                 `;
                 grid.appendChild(card);
             }
+            console.log('✅ Selesai render scenes!');
         }
 
         function editScene(editId = null) {
