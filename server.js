@@ -64,8 +64,8 @@ const firebaseConfig = {
 let db = null;
 let useFirebase = false;
 
-// Initialize Firebase (wrapped in async function to avoid top-level await issues)
-(async function initFirebase() {
+// Initialize Firebase (wrapped in Promise to avoid race condition
+let firebaseInitPromise = (async function initFirebase() {
     try {
         if (admin && firebaseConfig.project_id && firebaseConfig.private_key) {
             admin.initializeApp({
@@ -213,8 +213,12 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 
 app.use(cors());
+app.use(async (req, res, next) => {
+    await firebaseInitPromise;
+    next();
+});
 app.use((req, res, next) => {
-    console.log(`[${new Date().toLocaleString()}] ${req.method} ${req.url}`);
+    console.log(`[${new Date().toLocaleString()}] ${req.method} ${req.url} | useFirebase=${useFirebase}`);
     next();
 });
 app.use(express.json({ limit: '50mb' }));
@@ -228,16 +232,18 @@ app.get('/api/status', (req, res) => {
 
 // API to get config (legacy, untuk backward compatibility)
 app.get('/api/config', async (req, res) => {
-  try {
-    const configData = await readConfig();
-    if (!configData) {
-      return res.status(404).json({ success: false, message: 'Config not found' });
+    try {
+        console.log(`📥 GET /api/config | useFirebase=${useFirebase}`);
+        const configData = await readConfig();
+        if (!configData) {
+            return res.status(404).json({ success: false, message: 'Config not found' });
+        }
+        console.log(`✅ Mengirim config dengan ${Object.keys(configData.scenes || {}).length} scenes`);
+        res.json(configData);
+    } catch (error) {
+        console.error('❌ Get config error:', error);
+        res.status(500).json({ success: false, message: 'Gagal mendapatkan config' });
     }
-    res.json(configData);
-  } catch (error) {
-    console.error('Get config error:', error);
-    res.status(500).json({ success: false, message: 'Gagal mendapatkan config' });
-  }
 });
 
 // API to get scenes (from Firestore or JSON)
