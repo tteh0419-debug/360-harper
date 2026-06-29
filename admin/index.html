@@ -73,7 +73,7 @@
             display: block; 
             width: 100%; 
             height: 100%; 
-            background-image: url('https://res.cloudinary.com/dn9ulmxic/image/upload/v1782723204/info_wtmnmr.png');
+            background-image: url('https://res.cloudinary.com/dn9ulmxic/image/upload/v1782721738/WhatsApp_Image_2026-06-29_at_13.54.18-removebg-preview_hjmkcb.png');
             background-size: contain; 
             background-repeat: no-repeat; 
             background-position: center; 
@@ -1792,6 +1792,7 @@
             renderEditorHotspotsList();
             initPannellumEditor(scene);
             setupDragAndDrop();
+            updateInfoHotspotToolState();
         }
 
         function renderEditorSceneList() {
@@ -1959,6 +1960,15 @@
             };
         }
 
+        function updateInfoHotspotToolState() {
+            const infoTool = document.getElementById('newInfoHotspotTool');
+            if (!infoTool) return;
+            const hasInfo = tempHotspots.some(hs => hs.type === 'info');
+            infoTool.style.opacity = hasInfo ? '0.4' : '1';
+            infoTool.style.pointerEvents = hasInfo ? 'none' : 'auto';
+            infoTool.title = hasInfo ? 'Sudah ada hotspot informasi pada scene ini' : 'Tambah hotspot informasi baru';
+        }
+
         function handleViewerClick(pitch, yaw) {
             if (movingHotspotIndex !== null) {
                 tempHotspots[movingHotspotIndex].pitch = parseFloat(pitch.toFixed(2));
@@ -1975,6 +1985,11 @@
         }
 
         function addNewHotspot(pitch, yaw, sceneId = null, text = null, type = "scene") {
+            if (type === 'info' && tempHotspots.some(hs => hs.type === 'info')) {
+                alert('Setiap scene hanya boleh memiliki satu hotspot informasi. Hapus hotspot informasi yang ada terlebih dahulu jika ingin mengganti.');
+                return;
+            }
+
             const newHS = {
                 pitch: parseFloat(pitch.toFixed(2)),
                 yaw: parseFloat(yaw.toFixed(2)),
@@ -1983,7 +1998,7 @@
                 tooltip: text || (type === "info" ? "Klik untuk informasi" : "Ganti Deskripsi Ini"),
                 infoText: type === "info" ? "Masukkan teks informasi di sini..." : "",
                 sceneId: type === "scene" ? (sceneId || Object.keys(config.scenes)[0] || "exterior") : undefined,
-                cssClass: "custom-arrow-hotspot"
+                cssClass: type === 'info' ? "custom-info-hotspot" : "custom-arrow-hotspot"
             };
             tempHotspots.push(newHS);
             syncTempToConfig();
@@ -1995,6 +2010,7 @@
                 config.scenes[currentEditingId].hotSpots = JSON.parse(JSON.stringify(tempHotspots));
                 hasUnsavedChanges = true;
                 updateSaveButtonsUI();
+                updateInfoHotspotToolState();
                 triggerAutoSave();
             }
         }
@@ -2140,7 +2156,22 @@
         }
 
         function updateTempHotspot(index, key, value) {
+            if (key === 'type' && value === 'info') {
+                const hasOtherInfo = tempHotspots.some((hs, hsIndex) => hs.type === 'info' && hsIndex !== index);
+                if (hasOtherInfo) {
+                    alert('Setiap scene hanya boleh memiliki satu hotspot informasi. Pilih tipe lain atau hapus hotspot informasi yang ada terlebih dahulu.');
+                    renderEditorHotspotsList();
+                    return;
+                }
+            }
+
             tempHotspots[index][key] = value;
+            if (key === 'type') {
+                tempHotspots[index].cssClass = value === 'info' ? 'custom-info-hotspot' : 'custom-arrow-hotspot';
+                if (value !== 'info') {
+                    tempHotspots[index].infoText = '';
+                }
+            }
             syncTempToConfig();
             if(key === 'text') {
                 // Optional: live update viewer without full refresh if possible, 
