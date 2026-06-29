@@ -892,11 +892,11 @@
                 if (logoOverlay) logoOverlay.style.display = 'none';
             }
 
-            // Update Music from config
-            if (tourConfig.settings && tourConfig.settings.music && tourConfig.settings.music.url) {
-                bgMusic.src = tourConfig.settings.music.url;
-                bgMusic.load();
-            }
+            // Update Music from config (disabled for now to use the new URL)
+            // if (tourConfig.settings && tourConfig.settings.music && tourConfig.settings.music.url) {
+            //     bgMusic.src = tourConfig.settings.music.url;
+            //     bgMusic.load();
+            // }
             
             // Build Sidebar List
             buildSidebar();
@@ -914,7 +914,7 @@
     let panoViewer = null;
     let currentSceneId = "lobby";
     let autoRotateActive = true;
-    let bgMusic = new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_55a29f8c61.mp3'); // Smooth background jazz
+    let bgMusic = new Audio('https://res.cloudinary.com/dn9ulmxic/video/upload/v1782709291/The_Golden_Meridian_ulxocm.mp3'); // Smooth background jazz
     bgMusic.loop = true;
     bgMusic.volume = 0.2;
     bgMusic.addEventListener('error', (e) => {
