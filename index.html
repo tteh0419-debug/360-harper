@@ -241,6 +241,12 @@
             flex-direction: column;
             gap: 0.75rem;
             z-index: 900;
+            transform: translateX(80%);
+            transition: transform 0.3s ease-in-out;
+            padding-right: 1.5rem; /* Extra padding to make hover area bigger */
+        }
+        .controls-panel:hover, .controls-panel.mobile-open {
+            transform: translateX(0);
         }
 
         .ctrl-btn {
@@ -276,21 +282,27 @@
         /* Mini Map Navigation */
         .mini-map {
             position: fixed;
-            bottom: 2.5rem;
+            bottom: 0;
             left: 50%;
-            transform: translateX(-50%);
+            transform: translateX(-50%) translateY(85%);
             background: var(--bg-card);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             padding: 0.75rem 1.5rem;
-            border-radius: 50px;
+            border-radius: 50px 50px 0 0;
             border: 1px solid var(--border);
+            border-bottom: none;
             display: flex;
             gap: 1rem;
             z-index: 900;
             font-size: 0.9rem;
             font-weight: 500;
             box-shadow: var(--shadow-soft);
+            transition: transform 0.3s ease-in-out;
+            padding-top: 1.5rem; /* Extra top padding to make the visible area bigger for hover/tap */
+        }
+        .mini-map:hover, .mini-map.mobile-open {
+            transform: translateX(-50%) translateY(0);
         }
 
         .mini-map span {
@@ -1168,6 +1180,23 @@
     });
     document.getElementById('closeInfo').addEventListener('click', () => {
         document.getElementById('infoPanel').classList.remove('open');
+    });
+    
+    // Mobile toggle for auto-hide menus
+    const miniMap = document.getElementById('miniMap');
+    const controlsPanel = document.querySelector('.controls-panel');
+    
+    miniMap.addEventListener('click', (e) => {
+        // Toggle only if clicking on the visible part (not the actual menu items)
+        if (!e.target.closest('span') && !e.target.closest('.admin-link')) {
+            miniMap.classList.toggle('mobile-open');
+        }
+    });
+    controlsPanel.addEventListener('click', (e) => {
+        // Toggle only if clicking on the panel's container (not the control buttons)
+        if (!e.target.closest('.ctrl-btn')) {
+            controlsPanel.classList.toggle('mobile-open');
+        }
     });
     // Mini map click
     document.querySelectorAll('.mini-map span').forEach(el => {
