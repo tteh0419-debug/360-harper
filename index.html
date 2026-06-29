@@ -730,8 +730,14 @@
             // Update Custom Logo (sesuai permintaan: logoUrl di settings/config)
             const customLogoContainer = document.getElementById('custom-logo-container');
             const customLogo = document.getElementById('custom-logo');
+            console.log('Custom Logo Config:', tourConfig.settings);
             if (tourConfig.settings && tourConfig.settings.logoUrl) {
                 customLogo.src = isAbsoluteUrl(tourConfig.settings.logoUrl) ? tourConfig.settings.logoUrl : tourConfig.settings.logoUrl;
+                const height = tourConfig.settings.logoHeight || 60;
+                const width = tourConfig.settings.logoWidth || 150;
+                console.log('Applying custom logo size:', height, width);
+                customLogo.style.maxHeight = `${height}px`;
+                customLogo.style.maxWidth = `${width}px`;
                 customLogo.style.display = 'block';
             } else {
                 customLogo.style.display = 'none';
