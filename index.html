@@ -98,40 +98,42 @@
             filter: drop-shadow(0 4px 24px rgba(200,169,106,0.4));
         }
 
-        /* Custom Logo Container (fixed) */
-        #custom-logo-container { 
-            position: absolute; 
-            top: 10px; 
-            left: 20px; 
-            z-index: 9999; 
-            pointer-events: none; 
-        } 
-        #custom-logo { 
-            height: 120px; 
-            width: auto; 
-            object-fit: contain; 
-            display: none; 
-        }
-
-        /* Custom Info Scene Container */
-        #custom-info-container {
+        /* Left Branding Panel */
+        #left-branding-panel {
             position: absolute;
-            top: 160px;
+            top: 20px;
             left: 20px;
-            z-index: 9999;
-            pointer-events: auto;
-            display: none; /* Hidden by default */
+            z-index: 99999;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+            align-items: flex-start;
+            max-width: min(320px, 90vw);
         }
 
-        /* Info Icon Button */
-        #info-icon-btn {
+        #custom-logo,
+        #info-toggle-btn,
+        #info-popup-panel.show {
+            pointer-events: auto;
+        }
+
+        #custom-logo {
+            height: 120px;
+            width: auto;
+            object-fit: contain;
+            display: block;
+            border-radius: 18px;
+            box-shadow: var(--shadow-soft);
+        }
+
+        #info-toggle-btn {
             width: 50px;
             height: 50px;
             border-radius: 50%;
             background: var(--bg-card);
             border: 1px solid var(--border);
             color: var(--primary);
-            font-size: 1.5rem;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -140,40 +142,56 @@
             transition: all 0.3s ease;
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
+            outline: none;
         }
 
-        #info-icon-btn:hover {
-            transform: scale(1.1);
+        #info-toggle-btn:hover {
+            transform: scale(1.05);
             box-shadow: var(--glow);
         }
 
-        /* Info Popup Box */
-        #info-popup {
-            position: absolute;
-            top: 60px;
-            left: 0;
-            width: 320px;
-            max-width: 85vw;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 1.5rem;
+        #info-popup-panel {
+            width: 100%;
+            background: rgba(17, 17, 17, 0.82);
+            border: 1px solid rgba(200, 169, 106, 0.25);
+            border-radius: 18px;
+            padding: 1rem 1.2rem;
             box-shadow: var(--shadow-soft);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            display: none;
-            animation: fadeInUp 0.3s ease;
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+            visibility: hidden;
         }
 
-        #info-popup h4 {
+        #info-popup-panel.show {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+            visibility: visible;
+        }
+
+        #info-popup-panel h3 {
+            margin: 0 0 0.75rem 0;
             color: var(--primary);
-            margin-bottom: 0.75rem;
             font-family: 'Playfair Display', serif;
+            font-size: 1.05rem;
         }
 
-        #info-popup p {
+        .info-divider {
+            width: 44px;
+            height: 4px;
+            border-radius: 999px;
+            background: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        #info-popup-panel p {
+            margin: 0;
             color: var(--text-secondary);
-            line-height: 1.6;
+            line-height: 1.65;
             font-size: 0.95rem;
         }
 
@@ -979,15 +997,15 @@
     <a href="admin/login.html" class="admin-link" title="Admin Login"><i class="fas fa-user-shield"></i></a>
 </div>
 
-<div id="custom-logo-container"><img id="custom-logo" src="" alt="Logo"></div>
-
-<div id="custom-info-container">
-    <button id="info-icon-btn">
-        <i class="fas fa-info-circle"></i>
+<div id="left-branding-panel">
+    <img id="custom-logo" src="" alt="Harper Hotel Logo">
+    <button id="info-toggle-btn" title="Informasi Ruangan" style="display: none;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
     </button>
-    <div id="info-popup">
-        <h4>Informasi Scene</h4>
-        <p id="info-text-content"></p>
+    <div id="info-popup-panel">
+        <h3 id="info-panel-title">Nama Ruangan</h3>
+        <div class="info-divider"></div>
+        <p id="info-panel-desc">Deskripsi informasi.</p>
     </div>
 </div>
 
@@ -1027,7 +1045,6 @@
             }
             
             // Update Custom Logo (fixed position/size)
-            const customLogoContainer = document.getElementById('custom-logo-container');
             const customLogo = document.getElementById('custom-logo');
             if (tourConfig.settings && tourConfig.settings.logoUrl) {
                 customLogo.src = isAbsoluteUrl(tourConfig.settings.logoUrl) ? tourConfig.settings.logoUrl : tourConfig.settings.logoUrl;
@@ -1277,23 +1294,20 @@
                 if(sceneData) updateInfoPreview(sceneData.title, sceneData.description, sceneData.previewImg);
                 
                 // Handle Info Scene
-                const infoContainer = document.getElementById('custom-info-container');
-                const infoTextContent = document.getElementById('info-text-content');
-                const infoPopup = document.getElementById('info-popup');
+                const infoBtn = document.getElementById('info-toggle-btn');
+                const infoPanel = document.getElementById('info-popup-panel');
+                const infoPanelTitle = document.getElementById('info-panel-title');
+                const infoPanelDesc = document.getElementById('info-panel-desc');
                 const hasInfoHotspot = Array.isArray(sceneData.hotSpots) && sceneData.hotSpots.some(hs => hs.type === 'info');
                 const sceneInfo = getSceneInfoData(sceneData);
-                if (hasInfoHotspot) {
-                    infoContainer.style.display = 'none';
-                    infoPopup.style.display = 'none';
+                if (hasInfoHotspot || !sceneInfo.text) {
+                    infoBtn.style.display = 'none';
+                    infoPanel.classList.remove('show');
                     setTimeout(attachInfoHotspotClickHandlers, 250);
-                } else if (sceneInfo.text) {
-                    infoTextContent.innerText = sceneInfo.text;
-                    infoPopup.querySelector('h4').innerText = sceneInfo.title;
-                    infoContainer.style.display = 'block';
-                    positionInfoIcon();
                 } else {
-                    infoContainer.style.display = 'none';
-                    infoPopup.style.display = 'none'; // Hide popup too if no info
+                    infoBtn.style.display = 'flex';
+                    infoPanelTitle.innerText = sceneInfo.title;
+                    infoPanelDesc.innerText = sceneInfo.text;
                 }
                 
                 progressBar.style.width = "100%";
@@ -1304,25 +1318,21 @@
         updateInfoPreview(scene.title, scene.description, scene.previewImg);
         
         // Handle Info Scene for initial load
-        const infoContainer = document.getElementById('custom-info-container');
-        const infoTextContent = document.getElementById('info-text-content');
-        const infoPopup = document.getElementById('info-popup');
+        const infoBtn = document.getElementById('info-toggle-btn');
+        const infoPanel = document.getElementById('info-popup-panel');
+        const infoPanelTitle = document.getElementById('info-panel-title');
+        const infoPanelDesc = document.getElementById('info-panel-desc');
         const sceneInfo = getSceneInfoData(scene);
 
         const hasInfoHotspot = Array.isArray(scene.hotSpots) && scene.hotSpots.some(hs => hs.type === 'info');
-        if (hasInfoHotspot) {
-            infoContainer.style.display = 'none';
-            infoPopup.style.display = 'none';
+        if (hasInfoHotspot || !sceneInfo.text) {
+            infoBtn.style.display = 'none';
+            infoPanel.classList.remove('show');
             setTimeout(attachInfoHotspotClickHandlers, 250);
-        } else if (sceneInfo.text) {
-            document.querySelector('#custom-info-container #info-icon-btn i').className = 'fas fa-info-circle';
-            infoTextContent.innerText = sceneInfo.text;
-            infoPopup.querySelector('h4').innerText = sceneInfo.title;
-            infoContainer.style.display = 'block';
-            positionInfoIcon();
         } else {
-            infoContainer.style.display = 'none';
-            infoPopup.style.display = 'none';
+            infoBtn.style.display = 'flex';
+            infoPanelTitle.innerText = sceneInfo.title;
+            infoPanelDesc.innerText = sceneInfo.text;
         }
         
         progressBar.style.width = "100%";
@@ -1368,14 +1378,7 @@
         }
 
         function positionInfoIcon() {
-            const logoOverlay = document.querySelector('.logo-overlay');
-            const infoContainer = document.getElementById('custom-info-container');
-            if (!logoOverlay || !infoContainer) return;
-
-            const rect = logoOverlay.getBoundingClientRect();
-            infoContainer.style.left = `${rect.left}px`;
-            infoContainer.style.top = `${rect.bottom + 10}px`;
-            infoContainer.style.transform = 'none';
+            // No-op: left branding panel is positioned statically in the top-left.
         }
 
         window.addEventListener('resize', positionInfoIcon);
@@ -1525,22 +1528,22 @@
     });
 
     // Info Scene Control
-    const infoIconBtn = document.getElementById('info-icon-btn');
-    const infoPopup = document.getElementById('info-popup');
+    const infoToggleBtn = document.getElementById('info-toggle-btn');
+    const infoPopupPanel = document.getElementById('info-popup-panel');
 
-    infoIconBtn.addEventListener('click', (e) => {
+    infoToggleBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        if(infoPopup.style.display === 'block') {
-            infoPopup.style.display = 'none';
-        } else {
-            infoPopup.style.display = 'block';
-        }
+        infoPopupPanel.classList.toggle('show');
     });
 
-    // Close popup when clicking outside
+    infoPopupPanel.addEventListener('click', (e) => {
+        e.stopPropagation();
+    });
+
+    // Close panel when clicking outside
     document.addEventListener('click', (e) => {
-        if(!infoPopup.contains(e.target) && !infoIconBtn.contains(e.target)) {
-            infoPopup.style.display = 'none';
+        if (!infoPopupPanel.contains(e.target) && !infoToggleBtn.contains(e.target)) {
+            infoPopupPanel.classList.remove('show');
         }
     });
     
