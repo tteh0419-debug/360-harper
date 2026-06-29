@@ -139,7 +139,7 @@
         /* Invisible Trigger Zones */
         .trigger-zone {
             position: fixed;
-            background: transparent;
+            background: rgba(255, 0, 0, 0.3); /* Temporarily visible red for debugging */
             z-index: 99999; /* Super high z-index */
             pointer-events: auto;
         }
@@ -1230,41 +1230,58 @@
     const miniMapTrigger = document.getElementById('miniMapTrigger');
     const controlsPanelTrigger = document.getElementById('controlsPanelTrigger');
 
+    console.log('Debug: miniMap:', miniMap);
+    console.log('Debug: controlsPanel:', controlsPanel);
+    console.log('Debug: miniMapTrigger:', miniMapTrigger);
+    console.log('Debug: controlsPanelTrigger:', controlsPanelTrigger);
+
     // Mini Map Trigger (Bottom)
     miniMapTrigger.addEventListener('mouseenter', () => {
+        console.log('Debug: miniMapTrigger mouseenter');
         miniMap.classList.add('mobile-open');
+        console.log('Debug: miniMap classes:', miniMap.classList);
     });
     miniMapTrigger.addEventListener('mouseleave', () => {
+        console.log('Debug: miniMapTrigger mouseleave');
         miniMap.classList.remove('mobile-open');
     });
     miniMapTrigger.addEventListener('click', () => {
+        console.log('Debug: miniMapTrigger click');
         miniMap.classList.toggle('mobile-open');
     });
 
     // Also keep mini map hover support for when it's visible
     miniMap.addEventListener('mouseenter', () => {
+        console.log('Debug: miniMap mouseenter');
         miniMap.classList.add('mobile-open');
     });
     miniMap.addEventListener('mouseleave', () => {
+        console.log('Debug: miniMap mouseleave');
         miniMap.classList.remove('mobile-open');
     });
 
     // Controls Panel Trigger (Right)
     controlsPanelTrigger.addEventListener('mouseenter', () => {
+        console.log('Debug: controlsPanelTrigger mouseenter');
         controlsPanel.classList.add('mobile-open');
+        console.log('Debug: controlsPanel classes:', controlsPanel.classList);
     });
     controlsPanelTrigger.addEventListener('mouseleave', () => {
+        console.log('Debug: controlsPanelTrigger mouseleave');
         controlsPanel.classList.remove('mobile-open');
     });
     controlsPanelTrigger.addEventListener('click', () => {
+        console.log('Debug: controlsPanelTrigger click');
         controlsPanel.classList.toggle('mobile-open');
     });
 
     // Also keep controls panel hover support for when it's visible
     controlsPanel.addEventListener('mouseenter', () => {
+        console.log('Debug: controlsPanel mouseenter');
         controlsPanel.classList.add('mobile-open');
     });
     controlsPanel.addEventListener('mouseleave', () => {
+        console.log('Debug: controlsPanel mouseleave');
         controlsPanel.classList.remove('mobile-open');
     });
 
