@@ -732,7 +732,7 @@
             }
             
             if (logoUrl && mainLogo) {
-                mainLogo.src = logoUrl;
+                mainLogo.src = isAbsoluteUrl(logoUrl) ? logoUrl : logoUrl;
                 logoOverlay.style.display = 'flex';
                 mainLogo.style.height = `${logoSettings.size}px`;
                 mainLogo.style.opacity = logoSettings.opacity / 100;
