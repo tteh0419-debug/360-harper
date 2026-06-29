@@ -107,17 +107,17 @@
             pointer-events: none; 
         } 
         #custom-logo { 
-            height: 90px; 
+            height: 120px; 
             width: auto; 
             object-fit: contain; 
             display: none; 
         }
 
-        /* Custom Arrow Hotspot */
+        /* Custom Touch Hotspot */
         .custom-arrow-hotspot {
-            width: 40px !important;
-            height: 40px !important;
-            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23d4af37' stroke='%23fff' stroke-width='1'><path d='M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z'/></svg>") !important;
+            width: 50px !important;
+            height: 50px !important;
+            background-image: url('https://img.icons8.com/clouds/100/3d-touch.png') !important;
             background-size: contain !important;
             background-repeat: no-repeat !important;
             background-position: center !important;
@@ -125,15 +125,34 @@
             border: none !important;
             box-shadow: none !important;
             cursor: pointer;
-            transition: transform 0.2s ease-in-out;
+            z-index: 50 !important;
+            animation: hotspotPulse 2s infinite ease-in-out;
+            transition: transform 0.2s ease, filter 0.2s ease;
         }
         .custom-arrow-hotspot:hover {
-            transform: scale(1.2);
-            filter: drop-shadow(0px 0px 8px rgba(212, 175, 55, 0.8));
+            transform: scale(1.15);
+            filter: drop-shadow(0px 0px 8px rgba(30, 144, 255, 0.7));
         }
         /* Override Pannellum's default hotspot bg */
         .custom-arrow-hotspot.pnlm-hotspot {
             background-color: transparent !important;
+            border-radius: 0 !important;
+        }
+        /* Pulsing animation */
+        @keyframes hotspotPulse { 
+            0% { 
+                transform: scale(1); 
+                opacity: 0.9; 
+            } 
+            50% { 
+                transform: scale(1.08); 
+                opacity: 1; 
+                filter: drop-shadow(0px 0px 5px rgba(30, 144, 255, 0.4)); 
+            } 
+            100% { 
+                transform: scale(1); 
+                opacity: 0.9; 
+            } 
         }
 
         /* Menyembunyikan container judul bawaan Pannellum */ 
