@@ -744,8 +744,8 @@
 
         #footerSocialTray {
             position: fixed;
-            right: 3rem;
-            bottom: 1rem;
+            right: 4rem;
+            bottom: 0rem;
             z-index: 9998;
             display: flex;
             flex-wrap: wrap;
@@ -769,11 +769,13 @@
             z-index: 9999;
             color: rgba(255, 255, 255, 0.92);
             text-shadow: 0 0 6px rgba(0, 0, 0, 0.45);
-            font-size: 0.72rem;
+            font-size: 0.85rem;
             line-height: 1.4;
-            max-width: 200px;
+            max-width: 100%;
             pointer-events: none;
             text-align: left;
+            white-space: normal;
+            word-wrap: break-word;
         }
 
         @media (max-width: 768px) {
@@ -786,8 +788,8 @@
             #footerCopyrightDisplay {
                 bottom: 7.8rem;
                 left: 1rem;
-                max-width: 160px;
-                font-size: 0.68rem;
+                max-width: 100%;
+                font-size: 0.80rem;
             }
         }
 
