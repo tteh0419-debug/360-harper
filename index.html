@@ -117,7 +117,7 @@
         }
 
         #custom-logo {
-            height: 80px;
+            height: 90px;
             width: auto;
             object-fit: contain;
             display: block;
@@ -747,6 +747,59 @@
             transition: all 0.3s ease;
         }
 
+        #footerSocialTray {
+            position: fixed;
+            right: 1.5rem;
+            bottom: 1.5rem;
+            z-index: 9999;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.65rem;
+            align-items: center;
+            justify-content: center;
+            background: rgba(17, 17, 17, 0.88);
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            padding: 0.5rem 0.75rem;
+            box-shadow: var(--shadow-soft);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            max-width: calc(100vw - 2rem);
+        }
+
+        .footer-social-link {
+            width: 44px;
+            height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            text-decoration: none;
+            color: var(--primary);
+            background: rgba(255, 255, 255, 0.08);
+            transition: all 0.25s ease;
+            font-size: 1.15rem;
+        }
+
+        .footer-social-link:hover {
+            transform: translateY(-1px);
+            background: rgba(200, 169, 106, 0.15);
+        }
+
+        .footer-social-link.disabled {
+            opacity: 0.35;
+            pointer-events: none;
+            cursor: default;
+        }
+
+        @media (max-width: 768px) {
+            #footerSocialTray {
+                bottom: 6.5rem;
+                right: 1rem;
+                gap: 0.5rem;
+            }
+        }
+
         .social-icons a:hover {
             color: var(--primary);
             transform: translateY(-2px);
@@ -1015,6 +1068,8 @@
     </div>
 </div>
 
+<div id="footerSocialTray"></div>
+
 <script>
     // --- FETCH CONFIGURATION ---
     let tourConfig = null;
@@ -1119,6 +1174,7 @@
             
             // Build Sidebar List
             buildSidebar();
+            renderFooterSocialTray();
             
             // Initial load
             loadScene(tourConfig.default.firstScene);
@@ -1347,6 +1403,50 @@
             document.getElementById('infoTitle').innerText = title;
             document.getElementById('infoDesc').innerText = desc;
             if(imgUrl) document.getElementById('infoImage').src = isAbsoluteUrl(imgUrl) ? imgUrl : imgUrl;
+        }
+
+        function buildSocialLinkUrl(rawValue) {
+            if (!rawValue) return '';
+            const trimmed = rawValue.trim();
+            if (/^https?:\/\//i.test(trimmed)) return trimmed;
+            const digits = trimmed.replace(/[^0-9+]/g, '');
+            if (digits.length >= 7) {
+                const cleaned = digits.replace(/^\+/, '');
+                return `https://wa.me/${cleaned}`;
+            }
+            return '';
+        }
+
+        function getFooterSocialLink(icon) {
+            if (!tourConfig || !tourConfig.settings || !tourConfig.settings.footer) return '';
+            const socials = Array.isArray(tourConfig.settings.footer.socials) ? tourConfig.settings.footer.socials : [];
+            const item = socials.find(s => s.icon === icon);
+            return item ? (item.link || '') : '';
+        }
+
+        function renderFooterSocialTray() {
+            const tray = document.getElementById('footerSocialTray');
+            if (!tray || !tourConfig || !tourConfig.settings || !tourConfig.settings.footer) return;
+
+            const socials = [
+                { key: 'instagram', icon: 'fab fa-instagram', label: 'Instagram', link: getFooterSocialLink('fab fa-instagram') },
+                { key: 'twitter', icon: 'fab fa-twitter', label: 'Twitter', link: getFooterSocialLink('fab fa-twitter') },
+                { key: 'facebook', icon: 'fab fa-facebook-f', label: 'Facebook', link: getFooterSocialLink('fab fa-facebook-f') },
+                { key: 'tiktok', icon: 'fab fa-tiktok', label: 'TikTok', link: getFooterSocialLink('fab fa-tiktok') },
+                { key: 'whatsapp', icon: 'fab fa-whatsapp', label: 'WhatsApp', link: buildSocialLinkUrl(tourConfig.settings.footer.phone || '') },
+                { key: 'reserve', icon: 'fas fa-link', label: 'Reservasi Hotel', link: (tourConfig.settings.footer.reserveLink || '').trim() }
+            ];
+
+            tray.innerHTML = socials.map(item => {
+                const valid = item.link && item.link !== '#';
+                const hrefAttr = valid ? `href="${item.link}" target="_blank" rel="noopener noreferrer"` : '';
+                const disabledClass = valid ? '' : ' disabled';
+                return `
+                    <a class="footer-social-link${disabledClass}" aria-label="${item.label}" ${hrefAttr}>
+                        <i class="${item.icon}"></i>
+                    </a>
+                `;
+            }).join('');
         }
 
         function positionInfoIcon() {
