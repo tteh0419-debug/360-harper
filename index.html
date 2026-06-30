@@ -1205,6 +1205,8 @@
     let panoViewer = null;
     let currentSceneId = "lobby";
     let autoRotateActive = true;
+    let exteriorIntroRequested = false;
+    let exteriorIntroRan = false;
     let bgMusic = new Audio('https://res.cloudinary.com/dn9ulmxic/video/upload/v1782709291/The_Golden_Meridian_ulxocm.mp3'); // Smooth background jazz
     bgMusic.loop = true;
     bgMusic.volume = 0.2;
@@ -1214,6 +1216,24 @@
     bgMusic.addEventListener('canplaythrough', () => {
         console.log("Audio siap diputar");
     });
+
+    function runExteriorIntro() {
+        if (!panoViewer || currentSceneId !== 'exterior' || exteriorIntroRan || !exteriorIntroRequested) return;
+        exteriorIntroRan = true;
+
+        setTimeout(() => {
+            if (!panoViewer || currentSceneId !== 'exterior') return;
+            if (typeof panoViewer.lookTo === 'function') {
+                panoViewer.lookTo(0, 0, 90, 2000);
+            } else if (typeof panoViewer.lookAt === 'function') {
+                panoViewer.lookAt(0, 0, 90, 2000);
+            } else {
+                panoViewer.setYaw(0);
+                panoViewer.setPitch(0);
+                panoViewer.setHfov(90);
+            }
+        }, 250);
+    }
 
     // Fungsi load scene dengan smooth transition
     function loadScene(sceneId, fade=true) {
@@ -1332,6 +1352,12 @@
                     alert("Browser Anda tidak mendukung WebGL atau terjadi masalah saat memuat grafis panorama.");
                 } else {
                     console.warn("Pannellum load warning:", err.message);
+                }
+            });
+
+            panoViewer.on('load', () => {
+                if (exteriorIntroRequested && !exteriorIntroRan) {
+                    runExteriorIntro();
                 }
             });
 
@@ -1833,6 +1859,8 @@
             duration: 1,
             onComplete: () => {
                 document.getElementById('welcomeModal').style.display = 'none';
+                exteriorIntroRequested = true;
+                runExteriorIntro();
                 // Always play music when tour starts
                 try {
                     bgMusic.currentTime = 0;
