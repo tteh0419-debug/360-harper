@@ -130,6 +130,11 @@
             top: 105px;
             left: 0;
             width: 100%;
+            max-height: min(420px, 55vh);
+            overflow-y: auto;
+            overflow-wrap: anywhere;
+            word-wrap: break-word;
+            word-break: break-word;
             background: rgba(17, 17, 17, 0.82);
             border: 1px solid rgba(200, 169, 106, 0.25);
             border-radius: 18px;
@@ -142,6 +147,9 @@
             transition: all 0.3s ease;
             pointer-events: none;
             visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
         }
 
         #info-popup-panel.show {
@@ -171,6 +179,9 @@
             color: var(--text-secondary);
             line-height: 1.65;
             font-size: 0.95rem;
+            word-break: break-word;
+            overflow-wrap: anywhere;
+            white-space: pre-wrap;
         }
 
         .hotspot-info-popup {
