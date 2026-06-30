@@ -1222,18 +1222,31 @@
         exteriorIntroRan = true;
 
         const exteriorScene = tourConfig.scenes?.exterior || {};
-        const targetYaw = typeof exteriorScene.yaw === 'number' ? exteriorScene.yaw : 0;
+        const targetYaw = typeof exteriorScene.yaw === 'number' ? exteriorScene.yaw : 10;
+        const entryPitch = typeof exteriorScene.pitch === 'number' ? exteriorScene.pitch : -90;
+        const entryHfov = typeof exteriorScene.hfov === 'number' ? exteriorScene.hfov : 130;
+        const finalPitch = -15;
+        const finalHfov = 110;
+
+        // Set initial little planet view immediately
+        if (typeof panoViewer.lookTo === 'function') {
+            panoViewer.lookTo(targetYaw, entryPitch, entryHfov, 0);
+        } else {
+            panoViewer.setYaw(targetYaw);
+            panoViewer.setPitch(entryPitch);
+            panoViewer.setHfov(entryHfov);
+        }
 
         setTimeout(() => {
             if (!panoViewer || currentSceneId !== 'exterior') return;
             if (typeof panoViewer.lookTo === 'function') {
-                panoViewer.lookTo(targetYaw, 0, 90, 2500);
+                panoViewer.lookTo(targetYaw, finalPitch, finalHfov, 2500);
             } else if (typeof panoViewer.lookAt === 'function') {
-                panoViewer.lookAt(targetYaw, 0, 90, 2500);
+                panoViewer.lookAt(targetYaw, finalPitch, finalHfov, 2500);
             } else {
                 panoViewer.setYaw(targetYaw);
-                panoViewer.setPitch(0);
-                panoViewer.setHfov(90);
+                panoViewer.setPitch(finalPitch);
+                panoViewer.setHfov(finalHfov);
             }
         }, 500);
     }
