@@ -744,8 +744,8 @@
 
         #footerSocialTray {
             position: fixed;
-            right: 3rem;
-            bottom: 1rem;
+            right: 4rem;
+            bottom: 0rem;
             z-index: 9998;
             display: flex;
             flex-wrap: wrap;
@@ -1221,32 +1221,16 @@
         if (!panoViewer || currentSceneId !== 'exterior' || exteriorIntroRan || !exteriorIntroRequested) return;
         exteriorIntroRan = true;
 
-        const exteriorScene = tourConfig.scenes?.exterior || {};
-        const targetYaw = typeof exteriorScene.yaw === 'number' ? exteriorScene.yaw : 10;
-        const entryPitch = typeof exteriorScene.pitch === 'number' ? exteriorScene.pitch : -90;
-        const entryHfov = typeof exteriorScene.hfov === 'number' ? exteriorScene.hfov : 130;
-        const finalPitch = -15;
-        const finalHfov = 110;
-
-        // Set initial little planet view immediately
-        if (typeof panoViewer.lookTo === 'function') {
-            panoViewer.lookTo(targetYaw, entryPitch, entryHfov, 0);
-        } else {
-            panoViewer.setYaw(targetYaw);
-            panoViewer.setPitch(entryPitch);
-            panoViewer.setHfov(entryHfov);
-        }
-
         setTimeout(() => {
             if (!panoViewer || currentSceneId !== 'exterior') return;
             if (typeof panoViewer.lookTo === 'function') {
-                panoViewer.lookTo(targetYaw, finalPitch, finalHfov, 2500);
+                panoViewer.lookTo(0, 0, 90, 2500);
             } else if (typeof panoViewer.lookAt === 'function') {
-                panoViewer.lookAt(targetYaw, finalPitch, finalHfov, 2500);
+                panoViewer.lookAt(0, 0, 90, 2500);
             } else {
-                panoViewer.setYaw(targetYaw);
-                panoViewer.setPitch(finalPitch);
-                panoViewer.setHfov(finalHfov);
+                panoViewer.setYaw(0);
+                panoViewer.setPitch(0);
+                panoViewer.setHfov(90);
             }
         }, 500);
     }
@@ -1357,7 +1341,7 @@
                 "gyroscope": true,
                 "hotSpotDebug": false,
                 "minHfov": 50,
-                "maxHfov": 140,
+                "maxHfov": 120,
                 "backgroundColor": [0.1, 0.1, 0.1]
             });
 
