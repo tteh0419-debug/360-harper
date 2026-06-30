@@ -1221,20 +1221,7 @@
         if (!panoViewer || currentSceneId !== 'exterior' || exteriorIntroRan || !exteriorIntroRequested) return;
         exteriorIntroRan = true;
 
-        const exteriorScene = tourConfig.scenes?.exterior || {};
-        const targetYaw = typeof exteriorScene.yaw === 'number' ? exteriorScene.yaw : 0;
-        const targetPitch = typeof exteriorScene.pitch === 'number' ? exteriorScene.pitch : -90;
-        const targetHfov = typeof exteriorScene.hfov === 'number' ? exteriorScene.hfov : 130;
-
-        if (typeof panoViewer.lookTo === 'function') {
-            panoViewer.lookTo(targetYaw, targetPitch, targetHfov, 0);
-        } else if (typeof panoViewer.lookAt === 'function') {
-            panoViewer.lookAt(targetYaw, targetPitch, targetHfov, 0);
-        } else {
-            panoViewer.setYaw(targetYaw);
-            panoViewer.setPitch(targetPitch);
-            panoViewer.setHfov(targetHfov);
-        }
+        // Keep the initial exterior view unchanged so the camera does not jump to the HARPER text area.
     }
 
     // Fungsi load scene dengan smooth transition
