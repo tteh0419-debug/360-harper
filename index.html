@@ -744,8 +744,8 @@
 
         #footerSocialTray {
             position: fixed;
-            right: 4rem;
-            bottom: 0rem;
+            right: 3rem;
+            bottom: 1rem;
             z-index: 9998;
             display: flex;
             flex-wrap: wrap;
@@ -1224,15 +1224,15 @@
         setTimeout(() => {
             if (!panoViewer || currentSceneId !== 'exterior') return;
             if (typeof panoViewer.lookTo === 'function') {
-                panoViewer.lookTo(0, 0, 90, 2000);
+                panoViewer.lookTo(0, 0, 90, 2500);
             } else if (typeof panoViewer.lookAt === 'function') {
-                panoViewer.lookAt(0, 0, 90, 2000);
+                panoViewer.lookAt(0, 0, 90, 2500);
             } else {
                 panoViewer.setYaw(0);
                 panoViewer.setPitch(0);
                 panoViewer.setHfov(90);
             }
-        }, 250);
+        }, 500);
     }
 
     // Fungsi load scene dengan smooth transition
@@ -1356,7 +1356,7 @@
             });
 
             panoViewer.on('load', () => {
-                if (exteriorIntroRequested && !exteriorIntroRan) {
+                if (currentSceneId === 'exterior' && exteriorIntroRequested && !exteriorIntroRan) {
                     runExteriorIntro();
                 }
             });
