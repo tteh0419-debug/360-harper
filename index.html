@@ -1221,14 +1221,17 @@
         if (!panoViewer || currentSceneId !== 'exterior' || exteriorIntroRan || !exteriorIntroRequested) return;
         exteriorIntroRan = true;
 
+        const exteriorScene = tourConfig.scenes?.exterior || {};
+        const targetYaw = typeof exteriorScene.yaw === 'number' ? exteriorScene.yaw : 0;
+
         setTimeout(() => {
             if (!panoViewer || currentSceneId !== 'exterior') return;
             if (typeof panoViewer.lookTo === 'function') {
-                panoViewer.lookTo(0, 0, 90, 2500);
+                panoViewer.lookTo(targetYaw, 0, 90, 2500);
             } else if (typeof panoViewer.lookAt === 'function') {
-                panoViewer.lookAt(0, 0, 90, 2500);
+                panoViewer.lookAt(targetYaw, 0, 90, 2500);
             } else {
-                panoViewer.setYaw(0);
+                panoViewer.setYaw(targetYaw);
                 panoViewer.setPitch(0);
                 panoViewer.setHfov(90);
             }
@@ -1341,7 +1344,7 @@
                 "gyroscope": true,
                 "hotSpotDebug": false,
                 "minHfov": 50,
-                "maxHfov": 120,
+                "maxHfov": 140,
                 "backgroundColor": [0.1, 0.1, 0.1]
             });
 
