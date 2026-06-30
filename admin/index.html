@@ -964,21 +964,35 @@
                     <input type="text" id="footerCopyright">
                 </div>
                 <div class="form-group">
-                    <label>Nomor Telepon / Kontak</label>
-                    <input type="text" id="footerPhone">
+                    <label>Nomor WhatsApp</label>
+                    <input type="tel" id="footerPhone" placeholder="+62...">
                 </div>
                 <div class="form-group">
-                    <label>Link Reservasi (WhatsApp/Booking)</label>
-                    <input type="text" id="footerReserveLink" placeholder="https://wa.me/...">
+                    <label>Link Reservasi Hotel</label>
+                    <input type="url" id="footerReserveLink" placeholder="https://...">
                 </div>
-                
-                <label>Sosial Media (Icon & Link)</label>
-                <div id="socialMediaList">
-                    <!-- Social items will be rendered here -->
+
+                <div class="form-group">
+                    <label>Sosial Media</label>
+                    <div id="socialMediaStaticList">
+                        <div class="social-edit-item">
+                            <div class="icon-preview"><i class="fab fa-instagram"></i></div>
+                            <input type="url" id="socialInstagram" placeholder="Instagram URL">
+                        </div>
+                        <div class="social-edit-item">
+                            <div class="icon-preview"><i class="fab fa-twitter"></i></div>
+                            <input type="url" id="socialTwitter" placeholder="Twitter URL">
+                        </div>
+                        <div class="social-edit-item">
+                            <div class="icon-preview"><i class="fab fa-facebook-f"></i></div>
+                            <input type="url" id="socialFacebook" placeholder="Facebook URL">
+                        </div>
+                        <div class="social-edit-item">
+                            <div class="icon-preview"><i class="fab fa-tiktok"></i></div>
+                            <input type="url" id="socialTikTok" placeholder="TikTok URL">
+                        </div>
+                    </div>
                 </div>
-                <button class="btn btn-secondary" onclick="addSocialItem()" style="margin-top: 1rem;">
-                    <i class="fas fa-plus"></i> Tambah Sosial Media
-                </button>
             </div>
         </div>
 
@@ -2390,7 +2404,10 @@
             document.getElementById('footerCopyright').value = s.footer.copyright || "";
             document.getElementById('footerPhone').value = s.footer.phone || "";
             document.getElementById('footerReserveLink').value = s.footer.reserveLink || "#";
-            renderSocialMediaList();
+            document.getElementById('socialInstagram').value = getFooterSocialLink('fab fa-instagram');
+            document.getElementById('socialTwitter').value = getFooterSocialLink('fab fa-twitter');
+            document.getElementById('socialFacebook').value = getFooterSocialLink('fab fa-facebook-f');
+            document.getElementById('socialTikTok').value = getFooterSocialLink('fab fa-tiktok');
         }
 
         async function saveSettings() {
@@ -2405,6 +2422,12 @@
                 config.settings.footer.copyright = document.getElementById('footerCopyright').value;
                 config.settings.footer.phone = document.getElementById('footerPhone').value;
                 config.settings.footer.reserveLink = document.getElementById('footerReserveLink').value;
+                config.settings.footer.socials = [
+                    { icon: 'fab fa-instagram', link: document.getElementById('socialInstagram').value || '' },
+                    { icon: 'fab fa-twitter', link: document.getElementById('socialTwitter').value || '' },
+                    { icon: 'fab fa-facebook-f', link: document.getElementById('socialFacebook').value || '' },
+                    { icon: 'fab fa-tiktok', link: document.getElementById('socialTikTok').value || '' }
+                ];
 
                 // Update logo settings
                 config.settings.logo.size = parseInt(document.getElementById('logoSize').value);
@@ -2674,38 +2697,10 @@
             deleteLogoPermanently(config.settings.music.url, 'music');
         }
 
-        function renderSocialMediaList() {
-            const container = document.getElementById('socialMediaList');
-            container.innerHTML = '';
-            
-            if (!config.settings.footer.socials) config.settings.footer.socials = [];
-            
-            config.settings.footer.socials.forEach((item, index) => {
-                const div = document.createElement('div');
-                div.className = 'social-edit-item';
-                div.innerHTML = `
-                    <div class="icon-preview"><i class="${item.icon}"></i></div>
-                    <input type="text" value="${item.icon}" placeholder="Icon (e.g: fab fa-instagram)" onchange="updateSocialItem(${index}, 'icon', this.value)">
-                    <input type="text" value="${item.link}" placeholder="Link (URL)" onchange="updateSocialItem(${index}, 'link', this.value)">
-                    <button class="action-btn delete-btn" onclick="removeSocialItem(${index})"><i class="fas fa-times"></i></button>
-                `;
-                container.appendChild(div);
-            });
-        }
-
-        function addSocialItem() {
-            config.settings.footer.socials.push({ icon: "fab fa-link", link: "#" });
-            renderSocialMediaList();
-        }
-
-        function updateSocialItem(index, key, value) {
-            config.settings.footer.socials[index][key] = value;
-            renderSocialMediaList(); // Refresh preview icon
-        }
-
-        function removeSocialItem(index) {
-            config.settings.footer.socials.splice(index, 1);
-            renderSocialMediaList();
+        function getFooterSocialLink(icon) {
+            if (!config.settings.footer.socials) return '';
+            const item = config.settings.footer.socials.find(s => s.icon === icon);
+            return item ? item.link : '';
         }
 
         loadConfig();
