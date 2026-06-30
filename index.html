@@ -98,12 +98,11 @@
             filter: drop-shadow(0 4px 24px rgba(200,169,106,0.4));
         }
 
-        /* Left Branding Panel */
         #left-branding-panel {
-            position: absolute;
+            position: fixed;
             top: 20px;
             left: 20px;
-            z-index: 99999;
+            z-index: 100000;
             pointer-events: none;
             display: flex;
             flex-direction: column;
@@ -119,7 +118,7 @@
         }
 
         #custom-logo {
-            height: 120px;
+            height: 90px;
             width: auto;
             object-fit: contain;
             display: block;
@@ -135,7 +134,7 @@
             border: 1px solid var(--border);
             color: var(--primary);
             cursor: pointer;
-            display: flex;
+            display: flex !important;
             align-items: center;
             justify-content: center;
             box-shadow: var(--shadow-soft);
@@ -143,6 +142,10 @@
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             outline: none;
+            padding: 0;
+            min-width: 50px;
+            min-height: 50px;
+            z-index: 1;
         }
 
         #info-toggle-btn:hover {
@@ -1530,22 +1533,30 @@
     // Info Scene Control
     const infoToggleBtn = document.getElementById('info-toggle-btn');
     const infoPopupPanel = document.getElementById('info-popup-panel');
+    
+    console.log('Info button element:', infoToggleBtn);
+    console.log('Info panel element:', infoPopupPanel);
 
-    infoToggleBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        infoPopupPanel.classList.toggle('show');
-    });
+    if (infoToggleBtn && infoPopupPanel) {
+        infoToggleBtn.addEventListener('click', (e) => {
+            console.log('Info button clicked!');
+            e.stopPropagation();
+            infoPopupPanel.classList.toggle('show');
+        });
 
-    infoPopupPanel.addEventListener('click', (e) => {
-        e.stopPropagation();
-    });
+        infoPopupPanel.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
 
-    // Close panel when clicking outside
-    document.addEventListener('click', (e) => {
-        if (!infoPopupPanel.contains(e.target) && !infoToggleBtn.contains(e.target)) {
-            infoPopupPanel.classList.remove('show');
-        }
-    });
+        // Close panel when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!infoPopupPanel.contains(e.target) && !infoToggleBtn.contains(e.target)) {
+                infoPopupPanel.classList.remove('show');
+            }
+        });
+    } else {
+        console.error('Info button or panel not found!');
+    }
     
     // Hotspot pulse secara otomatis dari pannellum sudah scale, tapi tambah custom tooltip style
     // Kontrol UI
