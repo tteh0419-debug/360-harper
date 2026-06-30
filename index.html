@@ -112,7 +112,6 @@
         }
 
         #custom-logo,
-        #info-toggle-btn,
         #info-popup-panel.show {
             pointer-events: auto;
         }
@@ -126,34 +125,10 @@
             box-shadow: var(--shadow-soft);
         }
 
-        #info-toggle-btn {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            color: var(--primary);
-            cursor: pointer;
-            display: flex !important;
-            align-items: center;
-            justify-content: center;
-            box-shadow: var(--shadow-soft);
-            transition: all 0.3s ease;
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            outline: none;
-            padding: 0;
-            min-width: 50px;
-            min-height: 50px;
-            z-index: 1;
-        }
-
-        #info-toggle-btn:hover {
-            transform: scale(1.05);
-            box-shadow: var(--glow);
-        }
-
         #info-popup-panel {
+            position: absolute;
+            top: 105px;
+            left: 0;
             width: 100%;
             background: rgba(17, 17, 17, 0.82);
             border: 1px solid rgba(200, 169, 106, 0.25);
@@ -1002,9 +977,6 @@
 
 <div id="left-branding-panel">
     <img id="custom-logo" src="" alt="Harper Hotel Logo">
-    <button id="info-toggle-btn" title="Informasi Ruangan" style="display: none;">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-    </button>
     <div id="info-popup-panel">
         <h3 id="info-panel-title">Nama Ruangan</h3>
         <div class="info-divider"></div>
@@ -1219,14 +1191,21 @@
                                 return el;
                             };
                             processedHs.clickHandlerFunc = function(event, args) {
-                                console.log('Info hotspot clickHandlerFunc', hs.text, hs.infoText, event, args);
+                                console.log('Info hotspot clicked', hs.text, hs.infoText);
+                                const infoPanel = document.getElementById('info-popup-panel');
+                                const infoPanelTitle = document.getElementById('info-panel-title');
+                                const infoPanelDesc = document.getElementById('info-panel-desc');
+                                
+                                if (infoPanel && infoPanelTitle && infoPanelDesc) {
+                                    infoPanelTitle.innerText = hs.text || 'Informasi';
+                                    infoPanelDesc.innerText = hs.infoText || '';
+                                    infoPanel.classList.toggle('show');
+                                }
+                                
                                 if (event && typeof event.stopPropagation === 'function') {
                                     event.stopPropagation();
                                     event.preventDefault();
                                 }
-                                const target = event && event.target ? event.target : null;
-                                const hotspotEl = target ? target.closest('.pnlm-hotspot') : null;
-                                showHotspotInfoPopup(hs.text || 'Info', hs.infoText || '', hotspotEl || target);
                             };
                         }
 
@@ -1297,20 +1276,10 @@
                 if(sceneData) updateInfoPreview(sceneData.title, sceneData.description, sceneData.previewImg);
                 
                 // Handle Info Scene
-                const infoBtn = document.getElementById('info-toggle-btn');
                 const infoPanel = document.getElementById('info-popup-panel');
-                const infoPanelTitle = document.getElementById('info-panel-title');
-                const infoPanelDesc = document.getElementById('info-panel-desc');
                 const hasInfoHotspot = Array.isArray(sceneData.hotSpots) && sceneData.hotSpots.some(hs => hs.type === 'info');
-                const sceneInfo = getSceneInfoData(sceneData);
-                if (hasInfoHotspot || !sceneInfo.text) {
-                    infoBtn.style.display = 'none';
+                if (!hasInfoHotspot) {
                     infoPanel.classList.remove('show');
-                    setTimeout(attachInfoHotspotClickHandlers, 250);
-                } else {
-                    infoBtn.style.display = 'flex';
-                    infoPanelTitle.innerText = sceneInfo.title;
-                    infoPanelDesc.innerText = sceneInfo.text;
                 }
                 
                 progressBar.style.width = "100%";
@@ -1321,21 +1290,10 @@
         updateInfoPreview(scene.title, scene.description, scene.previewImg);
         
         // Handle Info Scene for initial load
-        const infoBtn = document.getElementById('info-toggle-btn');
         const infoPanel = document.getElementById('info-popup-panel');
-        const infoPanelTitle = document.getElementById('info-panel-title');
-        const infoPanelDesc = document.getElementById('info-panel-desc');
-        const sceneInfo = getSceneInfoData(scene);
-
         const hasInfoHotspot = Array.isArray(scene.hotSpots) && scene.hotSpots.some(hs => hs.type === 'info');
-        if (hasInfoHotspot || !sceneInfo.text) {
-            infoBtn.style.display = 'none';
+        if (!hasInfoHotspot) {
             infoPanel.classList.remove('show');
-            setTimeout(attachInfoHotspotClickHandlers, 250);
-        } else {
-            infoBtn.style.display = 'flex';
-            infoPanelTitle.innerText = sceneInfo.title;
-            infoPanelDesc.innerText = sceneInfo.text;
         }
         
         progressBar.style.width = "100%";
@@ -1530,33 +1488,19 @@
         }
     });
 
-    // Info Scene Control
-    const infoToggleBtn = document.getElementById('info-toggle-btn');
+    // Info Scene Control - Panel closes on global click outside
     const infoPopupPanel = document.getElementById('info-popup-panel');
     
-    console.log('Info button element:', infoToggleBtn);
-    console.log('Info panel element:', infoPopupPanel);
+    infoPopupPanel.addEventListener('click', (e) => {
+        e.stopPropagation();
+    });
 
-    if (infoToggleBtn && infoPopupPanel) {
-        infoToggleBtn.addEventListener('click', (e) => {
-            console.log('Info button clicked!');
-            e.stopPropagation();
-            infoPopupPanel.classList.toggle('show');
-        });
-
-        infoPopupPanel.addEventListener('click', (e) => {
-            e.stopPropagation();
-        });
-
-        // Close panel when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!infoPopupPanel.contains(e.target) && !infoToggleBtn.contains(e.target)) {
-                infoPopupPanel.classList.remove('show');
-            }
-        });
-    } else {
-        console.error('Info button or panel not found!');
-    }
+    // Close panel when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!infoPopupPanel.contains(e.target)) {
+            infoPopupPanel.classList.remove('show');
+        }
+    });
     
     // Hotspot pulse secara otomatis dari pannellum sudah scale, tapi tambah custom tooltip style
     // Kontrol UI
